@@ -11,6 +11,7 @@
 	<arg name="debug" 	default="false" /> 	<!-- debug mode -->
 	<arg name="info" 	default="false" /> 	<!-- print informational messages -->
 	<arg name="gaz" 	default="false" /> 	<!-- run gazebo -->	
+	<arg name="tfs"		default="true" />	<!-- publish transforms -->
 	<arg name="moveit" 	default="false" /> 	<!-- run moveit -->
 
 	<!-- Moveit general arguments -->
@@ -66,7 +67,7 @@
 	</include>     
 
 	<!-- launch the robot state publisher -->
-	<node if="$(arg gaz)" pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+	<node if="$(arg tfs)" pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
 		<param name="publish_frequency" type="double" value="10.0" />
 	</node>  
 

@@ -1,0 +1,17 @@
+rostopic pub -r 50 /arm_1/arm_controller/position_command brics_actuator/JointPositions "positions:
+- 
+  joint_uri: 'arm_joint_1'
+  unit: 'rad'
+  value: 0.1" 
+
+# ranges
+# joint 1: 0.0100692 and 5.84014
+# joint 2: 0.0100692 and 2.61799
+# joint 3: -5.02655 and -0.015708
+# joint 4: 0.0221239 and 3.4292
+# joint 5: 0.110619 and 5.64159
+rostopic pub -1 /arm_1/arm_controller/position_command brics_actuator/JointPositions "{positions: [{joint_uri: arm_joint_1, unit: rad, value: 3.0}]}"
+rostopic pub -1 /arm_1/arm_controller/position_command brics_actuator/JointPositions "{positions: [{joint_uri: arm_joint_2, unit: rad, value: 0.2}]}"
+rostopic pub -1 /arm_1/arm_controller/position_command brics_actuator/JointPositions "{positions: [{joint_uri: arm_joint_3, unit: rad, value: -1.7}]}"
+rostopic pub -1 /arm_1/arm_controller/position_command brics_actuator/JointPositions "{positions: [{joint_uri: arm_joint_4, unit: rad, value: 1.0}]}"
+rostopic pub -1 /arm_1/arm_controller/position_command brics_actuator/JointPositions "{positions: [{joint_uri: arm_joint_5, unit: rad, value: 3.0}]}"
