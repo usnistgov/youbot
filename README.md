@@ -17,12 +17,6 @@ This package was created using the MoveIt! Setup Assistant.  Most launch files a
 - **my_youbot_apps**
 This package contains scripts and launch files to run the robot.  
 
-- **my_youbot_planning_server** FUTURE 
-This package serves up instructions to the robot(s) and is a work in progress.  No my_youbot_app uses this service as of yet.
-
-- **my_youbot_msgs**
-This package contains messages for future use with the planning server
-
 # Installation
 - Install Ubuntu 12.04 [http://releases.ubuntu.com/12.04/](http://releases.ubuntu.com/12.04/)
 
