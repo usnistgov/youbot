@@ -1,7 +1,0 @@
-# specify the number of instructions requested
-int32 n
-
----
-
-# return a list of instructions to perform
-my_youbot_msgs/MoveInstruction instructions
