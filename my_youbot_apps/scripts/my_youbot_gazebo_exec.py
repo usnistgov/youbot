@@ -12,13 +12,10 @@ import rospy
 import math
 from tf.transformations import quaternion_from_euler #, quaternion_about_axis, quaternion_from_matrix, rotation_matrix
 import moveit_commander
-import moveit_msgs.msg
 import geometry_msgs.msg
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 import control_msgs.msg
 import actionlib
-
-from std_msgs.msg import String
   
 def jtg_feedback_cb(data):  
   rospy.loginfo('arm is moving')
@@ -28,25 +25,26 @@ def trajectory_toffset(traj, tsecs):
     traj.points[ii].time_from_start.secs += tsecs
   return traj
 
-def move_gripper(client, group, nextPoseSet, end_effector_link):
+def move_gripper(gripper_pub, opening_mm):
   # Creates a goal to send to the action server.
-  goal = control_msgs.msg.FollowJointTrajectoryGoal()
-  goal.trajectory.joint_names = ['gripper_finger_joint_l', 'gripper_finger_joint_r'] 
+  jt = JointTrajectory()
+  jt.joint_names = ['gripper_finger_joint_l', 'gripper_finger_joint_r'] 
   jtp = JointTrajectoryPoint()
-  jtp.positions = [nextPoseSet, nextPoseSet]
-  jtp.time_from_start.secs = 1
-  goal.trajectory.points.append(jtp)
-  print goal
+  jtp.positions = [opening_mm/2000, opening_mm/2000]
+  jtp.time_from_start = rospy.Duration(0.5)
+  jt.points.append(jtp)
   
-  # Sends the goal to the action server.
-  client.send_goal(goal, feedback_cb=jtg_feedback_cb)
+  # publish the trajectory
+  r = rospy.Rate(10)
+  start = rospy.get_rostime()  
+  now = start
+  while not rospy.is_shutdown() and (now.to_sec()-start.to_sec() < 2):
+    now = rospy.get_rostime()
+    gripper_pub.publish(jt)
+    r.sleep()
+    rospy.logdebug("publishing " + str(opening_mm) + " mm")
   
-  # Waits for the server to finish performing the action.
-  client.wait_for_result()  
-  
-  # get the result code
-  result_code = client.get_result()
-  return result_code
+  return 0
 
 def move_arm(client, group, nextPoseSet, end_effector_link):
   # Uncomment if one specific pose will be used
@@ -118,6 +116,7 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
   
 #  gripper_client = actionlib.SimpleActionClient(gripper_action_server_name, 
 #                                        control_msgs.msg.FollowJointTrajectoryAction)
+  gripper_pub = rospy.Publisher( "/arm_1/gripper_controller/command", JointTrajectory, queue_size=10, latch=False )
   
   # Waits until the action server has started up and started
   # listening for goals.
@@ -145,12 +144,30 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
   This section builds a set of waypoints.  The joint trajectory (the plan) will be
   computed using these waypoints.
   '''
+  # POSE 0
+  end_effector_link = "gripper_pointer_link"
+  roll = 0#-0.035
+  pitch = 0.424
+  yaw = 0# -0.117
+  quat = quaternion_from_euler(roll,pitch,yaw)
+  P = (0.009,0.0,0.6)
+  pose0 = geometry_msgs.msg.PoseStamped()
+  pose0.header.frame_id = "base_link"
+  pose0.pose.position.x = P[0]
+  pose0.pose.position.y = P[1]
+  pose0.pose.position.z = P[2]
+  pose0.pose.orientation.x = quat[0]
+  pose0.pose.orientation.y = quat[1]
+  pose0.pose.orientation.z = quat[2]
+  pose0.pose.orientation.w = quat[3] 
+    
   # POSE 1
   end_effector_link = "gripper_pointer_link"
-  theta = 0 #math.pi
-  psi = 0 #math.pi/4
-  quat = quaternion_from_euler(0,theta,psi)
-  P = (0.0,0.0,0.5)
+  roll = 0
+  pitch = 0
+  yaw = 0
+  quat = quaternion_from_euler(roll, pitch, yaw)
+  P = (0.0,0.0,0.55)
   pose1 = geometry_msgs.msg.PoseStamped()
   pose1.header.frame_id = "base_link"
   pose1.pose.position.x = P[0]
@@ -160,12 +177,12 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
   pose1.pose.orientation.y = quat[1]
   pose1.pose.orientation.z = quat[2]
   pose1.pose.orientation.w = quat[3]  
-  pose1_gripper_pos = 0.02
 
   # POSE 2
-  theta = -math.pi
-  psi = math.pi/4
-  quat = quaternion_from_euler(0,theta,psi)
+  roll = 0
+  pitch = -math.pi
+  yaw = math.pi/4
+  quat = quaternion_from_euler(roll, pitch, yaw)
   P = (0.2,0.2,0.01)
   pose2 = geometry_msgs.msg.PoseStamped()
   pose2.header.frame_id = "base_link"
@@ -176,26 +193,28 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
   pose2.pose.orientation.y = quat[1]
   pose2.pose.orientation.z = quat[2]
   pose2.pose.orientation.w = quat[3]
-  pose2_gripper_pos = 0.0
     
   # POSE 3
   pose3 = copy.deepcopy(pose2)
   pose3.pose.position.y = -pose3.pose.position.y
-  pose3_gripper_pos = 0.02
   
   # Pose list
   poses = []
-  poses.append(copy.deepcopy(pose1.pose))
+  
+  poses.append(copy.deepcopy(pose0.pose))
   poses.append(copy.deepcopy(pose2.pose))
-  poses.append(copy.deepcopy(pose1.pose))
+  poses.append(copy.deepcopy(pose0.pose))
   poses.append(copy.deepcopy(pose3.pose))
+  poses.append(copy.deepcopy(pose1.pose))
+  
   
   # gripper list
   gripper_poses = []
-  gripper_poses.append(pose1_gripper_pos)
-  gripper_poses.append(pose2_gripper_pos)
-  gripper_poses.append(pose1_gripper_pos)
-  gripper_poses.append(pose3_gripper_pos)
+  gripper_poses.append(0.020*1000)
+  gripper_poses.append(0.011*1000)
+  gripper_poses.append(0.011*1000)
+  gripper_poses.append(0.022*1000)
+  gripper_poses.append(0.000*1000)
   
   # Enforce that the poses are specified in reference to the base_link
   group.set_pose_reference_frame("base_link")
@@ -209,7 +228,7 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
   iiPose = 0
   nPoses =  len(poses)
   print "nPoses: " + str(nPoses)
-  while not rospy.is_shutdown():
+  for iiPose in range(nPoses):
     
     nextPoseSet = []
     
@@ -226,16 +245,10 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
     rospy.loginfo("move arm return code")
     rospy.loginfo(result_code)  
     
-    #nextGripperPos = gripper_poses[pindex] 
-    #result_code = move_gripper(gripper_client, group, nextGripperPos, end_effector_link)
-    #rospy.loginfo("move gripper return code")
-    #rospy.loginfo(result_code)
-    
-    # increment pose counter
-    if iiPose > 10:
-      break
-    else:
-      iiPose += 1
+    nextGripperPos = gripper_poses[pindex] 
+    result_code = move_gripper(gripper_pub,nextGripperPos)
+    rospy.loginfo("move gripper return code")
+    rospy.loginfo(result_code)
   
 
   ## When finished shut down moveit_commander.
