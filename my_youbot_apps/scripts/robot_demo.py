@@ -10,21 +10,22 @@ import sys
 import copy
 import rospy
 import math
-from tf.transformations import quaternion_from_euler 
+from tf.transformations import quaternion_from_euler #, quaternion_about_axis, quaternion_from_matrix, rotation_matrix
 import moveit_commander
+import moveit_msgs.msg
 import geometry_msgs.msg
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
-from brics_actuator.msg import JointPositions, JointValue
 import control_msgs.msg
 import actionlib
+from brics_actuator.msg import JointPositions, JointValue
   
 def jtg_feedback_cb(data):  
   rospy.loginfo('arm is moving')
   rospy.loginfo(data)
   
-def trajectory_toffset(traj, tstep):
+def trajectory_toffset(traj, tsecs):
   for ii in range(0,len(traj.points)):
-    traj.points[ii].time_from_start.secs = ii*tstep
+    traj.points[ii].time_from_start.secs+= tsecs
   return traj
 
 '''
@@ -118,8 +119,8 @@ def move_arm(client, group, nextPoseSet, end_effector_link):
   result_code = None
   group.clear_pose_targets()
   group.set_pose_targets(nextPoseSet, end_effector_link)
-  group.set_goal_position_tolerance(0.01)
-  group.set_goal_orientation_tolerance(0.1)     
+  #group.set_goal_position_tolerance(0.01)
+  #group.set_goal_orientation_tolerance(0.1)     
   
   '''
   Call Moveit! planner to produce a trajectory
@@ -130,8 +131,11 @@ def move_arm(client, group, nextPoseSet, end_effector_link):
     rospy.loginfo("Trajectory not found for given pose and solver")
     #break  # We exit if a plan is not found
   else:
-    #plan.joint_trajectory = trajectory_toffset(plan.joint_trajectory, 1)
+    plan.joint_trajectory = trajectory_toffset(plan.joint_trajectory, 0)
     rospy.loginfo("Moving to pose ")
+
+    #print "Trajectory computed"
+    #rospy.loginfo(plan)
   
     # Creates a goal to send to the action server.
     goal = control_msgs.msg.FollowJointTrajectoryGoal()
@@ -157,7 +161,7 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
   ## First initialize moveit_commander and rospy.
   print "============ Starting tutorial setup"
   moveit_commander.roscpp_initialize(sys.argv)
-  rospy.init_node('my_youbot_exec',
+  rospy.init_node('robot_exec',
                   anonymous=False)
 
   ## Instantiate a RobotCommander object. This object is an interface to
@@ -175,10 +179,10 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
   print "Creating move group commander object"
   group = moveit_commander.MoveGroupCommander("manipulator")
   group.set_planning_time(15)
-  print "Current pose"
-  print group.get_current_pose()
-  print "Current rpy"
-  print group.get_current_rpy()
+  #print "Current pose"
+  #print group.get_current_pose()
+  #print "Current rpy"
+  #print group.get_current_rpy()
   #return None
 
   ## Create a client for the action server
@@ -187,8 +191,8 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
                                         control_msgs.msg.FollowJointTrajectoryAction)
   
   rospy.loginfo("Create gripper joint trajectory action client " + gripper_action_server_name)
-  gripper_client = actionlib.SimpleActionClient(gripper_action_server_name, 
-                                        control_msgs.msg.FollowJointTrajectoryAction)
+  #gripper_client = actionlib.SimpleActionClient(gripper_action_server_name, 
+  #                                      control_msgs.msg.FollowJointTrajectoryAction)
   
   # Waits until the action server has started up and started
   # listening for goals.
@@ -211,21 +215,21 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
 
   ## Sometimes for debugging it is useful to print the entire state of the
   ## robot.
-  print "============ Printing robot state"
-  print robot.get_current_state()
-  print "============"
+  #print "============ Printing robot state"
+  #print robot.get_current_state()
+  #print "============"
   
   '''
   This section builds a set of waypoints.  The joint trajectory (the plan) will be
   computed using these waypoints.
   '''
-  # POSE 1
+  # POSE1
   end_effector_link = "gripper_pointer_link"
-  roll = -0.035
-  pitch = 0.424
-  yaw = -0.117
+  roll = 0
+  pitch = 0 #math.pi
+  yaw = 0 #math.pi/4
   quat = quaternion_from_euler(roll,pitch,yaw)
-  P = (0.007,0.0,0.57)
+  P = (0.0,0.0,0.55)
   pose1 = geometry_msgs.msg.PoseStamped()
   pose1.header.frame_id = "base_link"
   pose1.pose.position.x = P[0]
@@ -235,14 +239,14 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
   pose1.pose.orientation.y = quat[1]
   pose1.pose.orientation.z = quat[2]
   pose1.pose.orientation.w = quat[3]  
-  pose1_gripper_pos = 0.022
+  pose1_gripper_pos = 0.02
 
   # POSE 2
-  roll = -3.13
-  pitch = (7./8.)*math.pi #0.166
-  yaw = -math.pi #-3.05
-  P = (0.32,0.005,0.057)
+  roll = 0
+  pitch = -math.pi
+  yaw = math.pi/4
   quat = quaternion_from_euler(roll,pitch,yaw)
+  P = (0.2,-0.18,0.1)
   pose2 = geometry_msgs.msg.PoseStamped()
   pose2.header.frame_id = "base_link"
   pose2.pose.position.x = P[0]
@@ -252,44 +256,41 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
   pose2.pose.orientation.y = quat[1]
   pose2.pose.orientation.z = quat[2]
   pose2.pose.orientation.w = quat[3]
-  pose2_gripper_pos = 0.015
+  pose2_gripper_pos = 0.0
     
-  # POSE 2a
-  theta = math.pi/3
-  psi = 0
-  quat = quaternion_from_euler(0,theta,psi)
-  P = (0.30,0.0,0.06)
-  pose2a = geometry_msgs.msg.PoseStamped()
-  pose2a.header.frame_id = "base_link"
-  pose2a.pose.position.x = P[0]
-  pose2a.pose.position.y = P[1]
-  pose2a.pose.position.z = P[2]
-  pose2a.pose.orientation.x = quat[0]
-  pose2a.pose.orientation.y = quat[1]
-  pose2a.pose.orientation.z = quat[2]
-  pose2a.pose.orientation.w = quat[3]
-  pose2a_gripper_pos = 0.0
-
   # POSE 3
-  pose3 = copy.deepcopy(pose2)
-  pose3.pose.position.y = -pose3.pose.position.y 
-  pose3_gripper_pos = 0.02
+  #pose3 = copy.deepcopy(pose2)
+  #pose3.pose.position.y = -pose3.pose.position.y
+  #pose3_gripper_pos = 0.02
+  roll = 0
+  theta = -math.pi
+  yaw = math.pi/4
+  quat = quaternion_from_euler(roll,pitch,yaw)
+  P = (0.2,0.18,0.1)
+  pose3 = geometry_msgs.msg.PoseStamped()
+  pose3.header.frame_id = "base_link"
+  pose3.pose.position.x = P[0]
+  pose3.pose.position.y = P[1]
+  pose3.pose.position.z = P[2]
+  pose3.pose.orientation.x = quat[0]
+  pose3.pose.orientation.y = quat[1]
+  pose3.pose.orientation.z = quat[2]
+  pose3.pose.orientation.w = quat[3]
+  pose3_gripper_pos = 0.0
   
   # Pose list
   poses = []
-  poses.append(copy.deepcopy(pose1.pose))
+  #poses.append(copy.deepcopy(pose1.pose))
   poses.append(copy.deepcopy(pose2.pose))
-  #poses.append(copy.deepcopy(pose3.pose))
+  #poses.append(copy.deepcopy(pose1.pose))
+  poses.append(copy.deepcopy(pose3.pose))
   
   # gripper list
   gripper_poses = []
-  gripper_poses.append(pose1_gripper_pos)
+  #gripper_poses.append(pose1_gripper_pos)
   gripper_poses.append(pose2_gripper_pos)
-  #gripper_poses.append(pose3_gripper_pos)
-  #gripper_poses.append(pose2_gripper_pos)
-  #gripper_poses.append(pose3_gripper_pos)
-  #gripper_poses.append(pose2_gripper_pos)
-  #gripper_poses.append(pose3_gripper_pos)
+  #gripper_poses.append(pose1_gripper_pos)
+  gripper_poses.append(pose3_gripper_pos)
   
   # Enforce that the poses are specified in reference to the base_link
   group.set_pose_reference_frame("base_link")
@@ -309,6 +310,7 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
     
     # determine pose index
     pindex = iiPose % nPoses
+    print "Pose: " + str(pindex+1)
     
     # set the next pose
     nextPoseSet.append(poses[pindex])
@@ -317,19 +319,19 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
     
     # move the arm
     result_code = move_arm(arm_client, group, nextPoseSet, end_effector_link)
-    rospy.loginfo("move arm return code")
-    rospy.loginfo(result_code)  
+    #rospy.loginfo("move arm return code")
+    #rospy.loginfo(result_code)  
     
-    opening_m = gripper_poses[pindex] 
-    move_gripper("/arm_1/gripper_controller/position_command", JointPositions, opening_m)
-    rospy.loginfo("move gripper return code")
-    rospy.loginfo("Done")
+    #opening_m = gripper_poses[pindex] 
+    #move_gripper("/arm_1/gripper_controller/position_command", JointPositions, opening_m)
+    #rospy.loginfo("move gripper return code")
+    #rospy.loginfo("Done")
 
     # sleep ?
-    #rospy.sleep(1)
+    rospy.sleep(1)
     
     # increment pose counter
-    if iiPose > 1:
+    if iiPose > 100:
       break
     else:
       iiPose += 1
