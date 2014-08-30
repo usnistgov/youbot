@@ -107,7 +107,7 @@ def plan_arm(client, group, pose, end_effector_link):
 	result_code = None
 	group.clear_pose_targets()
 	group.set_pose_target(pose, end_effector_link)
-	group.set_goal_position_tolerance(0.01)
+	#Sgroup.set_goal_position_tolerance(0.01)
 	#group.set_goal_orientation_tolerance(0.05)     
 	plan = group.plan()
 
@@ -231,10 +231,15 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
 	# Enforce that the poses are specified in reference to the base_link
 	group.set_pose_reference_frame("base_link")
 	end_effector_link = "gripper_pointer_link"
+	
+	# move to the ready pose
+	ready_goal = control_msgs.msg.FollowJointTrajectoryGoal()
+	ready_jtp = JointTrajectoryPoint()
+	ready_jtp.positions = [2.95,0.7,-2.0,2.1,0.15]
+	ready_goal.trajectory.points.append(ready_jtp)
+	move_arm_brics(arm_pub, ready_goal, arm_pub_dur)
 
 	# create a pose object with default settings
-	zup = 0.1
-	zdn = 0.05
 	roll = 0
 	pitch = -math.pi
 	yaw = math.pi/4
@@ -248,7 +253,9 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
 	
 	# create the position vectors for the poses
 	from numpy import arange, cos, sin
-	rad = 0.27 # meters
+	rad = 0.2 # meters
+	zup = 0.06
+	zdn = 0.03	
 	npts = 10
 	# angles in first and second quadrants only
 	theta_vec = -(math.pi*arange(npts+1)/float(npts)-math.pi/2.0)
@@ -263,9 +270,9 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
 	
 	USE_BRICS = False
 	
-	while not rospy.is_shutdown():
+	while True:
 
-		for ii in range(npts+1):
+		for ii in range(npts):
 			
 			if rospy.is_shutdown():
 				return (-1)
