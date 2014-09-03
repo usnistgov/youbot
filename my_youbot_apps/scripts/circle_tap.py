@@ -116,6 +116,7 @@ def plan_arm(client, group, pose, end_effector_link):
 		return None
 
 	else:
+		rospy.loginfo("number of points in traj: " + str(len(plan.joint_trajectory.points)))
 		plan.joint_trajectory = trajectory_toffset(plan.joint_trajectory, 0)
 		goal = control_msgs.msg.FollowJointTrajectoryGoal()
 		goal.trajectory = copy.deepcopy(plan.joint_trajectory)
@@ -268,7 +269,7 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
 	dn_goal = [False]*npts	
 	print dn_status
 	
-	USE_BRICS = False
+	USE_BRICS = True
 	
 	while True:
 
@@ -298,12 +299,18 @@ def JointTrajectory_client(arm_action_server_name, gripper_action_server_name):
 					rospy.logdebug(goal)				
 					up_status[ii] = True
 					up_goal[ii] = goal
-					#move_arm_as(arm_client, up_goal[ii])
-					move_arm_brics(arm_pub, up_goal[ii], arm_pub_dur)
+					if USE_BRICS:
+						move_arm_brics(arm_pub, up_goal[ii], arm_pub_dur)
+					else:
+						move_arm_as(arm_client, up_goal[ii])
+					
 			else:
 				rospy.loginfo("using stored up goal")
-				#move_arm_as(arm_client, up_goal[ii])
-				move_arm_brics(arm_pub, up_goal[ii], arm_pub_dur)
+				if USE_BRICS:
+					move_arm_brics(arm_pub, up_goal[ii], arm_pub_dur)
+				else:
+					move_arm_as(arm_client, up_goal[ii])
+				
 				
 			if up_status[ii] is not False:
 				# work the down pose
