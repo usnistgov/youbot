@@ -355,7 +355,7 @@ if __name__=='__main__':
 		#JointTrajectory_publisher(
 		#     topic_name="/arm_1/arm_controller/command", 
 		#     msg_type=JointTrajectory)     
-		JointTrajectory_client('/arm_1/arm_controller/follow_joint_trajectory',
+		JointTrajectory_client(use_brics, '/arm_1/arm_controller/follow_joint_trajectory',
 				   '/arm_1/gripper_controller/follow_joint_trajectory')
 
 	except rospy.ROSInterruptException:
