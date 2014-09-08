@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 '''
- @author: Rick Candell, Adrian Clarke
+ @author: Rick Candell
  @contact: rick.candell@nist.gov
  @organization: NIST
 '''
