@@ -4,7 +4,7 @@ Author: Rick Candell <br>
 Contact: rick.candell@nist.gov <br>
 
 # Overview
-This repository contains many different ROS packages required to run the youbot in simulation and with the actual robot
+This repository contains many different ROS packages required to run the youbot in simulation and with the actual robot.
 
 # Package Contents
 
