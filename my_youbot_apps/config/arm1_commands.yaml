@@ -1,0 +1,96 @@
+-
+    type: move_gripper
+    command: opening 
+-
+    type: move_arm
+    command: cand
+-
+    type: move_arm
+    command: premach1
+-
+    type: move_arm
+    command: mach1
+-  
+    type: move_gripper
+    command: closing
+-
+    type: move_arm
+    command: premach1
+- 
+    type: move_arm
+    command: cand
+-
+    type: move_arm
+    command: cand
+-
+    type: move_arm
+    command: trans1
+-
+    type: move_gripper
+    command: opening
+-
+    type: move_arm
+    command: cand
+-
+    type: move_arm
+    command: ready_tight_spot
+-
+    type: move_arm
+    command: tight_spot
+-
+    type: move_gripper
+    command: closing
+-
+    type: move_arm
+    command: posttight_spot_pickA
+-
+    type: move_arm
+    command: posttight_spot_pickB
+-
+    type: move_arm
+    command: premach1
+-
+    type: move_arm
+    command: mach1
+-
+    type: move_gripper
+    command: opening
+-
+    type: move_arm
+    command: cand
+-
+    type: move_arm
+    command: prepick_rob1
+-
+    type: sleep
+    seconds: 1.5 # This is just to wait for the ball to roll. Can be longer if necessary.
+-
+    type: move_arm
+    command: pick_rob1
+-
+    type: move_gripper
+    command: closing
+-
+    type: move_arm
+    command: ready_tight_spot
+-
+    type: move_arm
+    command: pretight_spot_place
+-
+    type: move_arm
+    command: tight_spot
+-
+    type: move_gripper
+    command: opening
+-
+    type: move_arm
+    command: posttight_spot_place
+-
+    type: move_arm
+    command: ready_tight_spot
+-
+    type: move_arm
+    command: cand
+    
+    
+    
