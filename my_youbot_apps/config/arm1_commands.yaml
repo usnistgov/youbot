@@ -1,96 +1,107 @@
+# Author: Rick Candell
+# Org: NIST
+# License: Public Domain
+# Configuration file format
+# Put a - between each entry 
+# Specify the following:
+#   type: plan_exec_arm, move_arm, move_gripper, sleep
+#   spec:  for all move types, specify the name of the goal as joint positions
+#             for all plan types, specify the eef position as [x, y, z, r, p, y]
+#             for sleep, specify seconds as a float
+
 -
     type: move_gripper
-    command: opening 
+    spec: opening 
 -
     type: move_arm
-    command: cand
+    spec: cand
 -
     type: move_arm
-    command: premach1
+    spec: premach1
 -
     type: move_arm
-    command: mach1
+    spec: mach1
 -  
     type: move_gripper
-    command: closing
+    spec: closing
 -
     type: move_arm
-    command: premach1
+    spec: premach1
 - 
     type: move_arm
-    command: cand
+    spec: cand
 -
     type: move_arm
-    command: cand
+    spec: cand
 -
     type: move_arm
-    command: trans1
+    spec: trans1
 -
     type: move_gripper
-    command: opening
+    spec: opening
 -
     type: move_arm
-    command: cand
+    spec: cand
 -
     type: move_arm
-    command: ready_tight_spot
+    spec: ready_tight_spot
 -
     type: move_arm
-    command: tight_spot
+    spec: tight_spot
 -
     type: move_gripper
-    command: closing
+    spec: closing
 -
     type: move_arm
-    command: posttight_spot_pickA
+    spec: posttight_spot_pickA
 -
     type: move_arm
-    command: posttight_spot_pickB
+    spec: posttight_spot_pickB
 -
     type: move_arm
-    command: premach1
+    spec: premach1
 -
     type: move_arm
-    command: mach1
+    spec: mach1
 -
     type: move_gripper
-    command: opening
+    spec: opening
 -
     type: move_arm
-    command: cand
+    spec: cand
 -
     type: move_arm
-    command: prepick_rob1
+    spec: prepick_rob1
 -
     type: sleep
     seconds: 1.5 # This is just to wait for the ball to roll. Can be longer if necessary.
 -
     type: move_arm
-    command: pick_rob1
+    spec: pick_rob1
 -
     type: move_gripper
-    command: closing
+    spec: closing
 -
     type: move_arm
-    command: ready_tight_spot
+    spec: ready_tight_spot
 -
     type: move_arm
-    command: pretight_spot_place
+    spec: pretight_spot_place
 -
     type: move_arm
-    command: tight_spot
+    spec: tight_spot
 -
     type: move_gripper
-    command: opening
+    spec: opening
 -
     type: move_arm
-    command: posttight_spot_place
+    spec: posttight_spot_place
 -
     type: move_arm
-    command: ready_tight_spot
+    spec: ready_tight_spot
 -
     type: move_arm
-    command: cand
+    spec: cand
     
     
     

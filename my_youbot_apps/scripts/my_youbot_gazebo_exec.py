@@ -26,25 +26,25 @@ def trajectory_toffset(traj, tsecs):
   return traj
 
 def move_gripper(gripper_pub, opening_mm):
-  # Creates a goal to send to the action server.
-  jt = JointTrajectory()
-  jt.joint_names = ['gripper_finger_joint_l', 'gripper_finger_joint_r'] 
-  jtp = JointTrajectoryPoint()
-  jtp.positions = [opening_mm/2000, opening_mm/2000]
-  jtp.time_from_start = rospy.Duration(0.5)
-  jt.points.append(jtp)
-  
-  # publish the trajectory
-  r = rospy.Rate(10)
-  start = rospy.get_rostime()  
-  now = start
-  while not rospy.is_shutdown() and (now.to_sec()-start.to_sec() < 2):
-    now = rospy.get_rostime()
-    gripper_pub.publish(jt)
-    r.sleep()
-    rospy.logdebug("publishing " + str(opening_mm) + " mm")
-  
-  return 0
+    # Creates a goal to send to the action server.
+    jt = JointTrajectory()
+    jt.joint_names = ['gripper_finger_joint_l', 'gripper_finger_joint_r'] 
+    jtp = JointTrajectoryPoint()
+    jtp.positions = [opening_mm/2000, opening_mm/2000]
+    jtp.time_from_start = rospy.Duration(0.5)
+    jt.points.append(jtp)
+    
+    # publish the trajectory
+    r = rospy.Rate(10)
+    start = rospy.get_rostime()  
+    now = start
+    while not rospy.is_shutdown() and (now.to_sec()-start.to_sec() < 2):
+        now = rospy.get_rostime()
+        gripper_pub.publish(jt)
+        r.sleep()
+        rospy.logdebug("publishing " + str(opening_mm) + " mm")
+    
+    return 0
 
 def move_arm(client, group, nextPoseSet, end_effector_link):
   # Uncomment if one specific pose will be used

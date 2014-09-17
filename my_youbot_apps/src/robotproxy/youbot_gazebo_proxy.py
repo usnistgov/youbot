@@ -6,26 +6,28 @@
 @license: public domain
 '''
 
+import sys
 import copy
 import rospy
 import moveit_commander
-from base_proxy import *
-from control_msgs.msg import *
-from trajectory_msgs.msg import *
+from base_proxy import BaseProxy
+from geometry_msgs.msg import PoseStamped
+from tf.transformations import quaternion_from_euler
+from trajectory_msgs.msg import JointTrajectoryPoint
+from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
 import actionlib
-import yaml
 
 class YoubotGazeboProxy(BaseProxy):
     
     # class attributes
-    _arm_joint_names = ['arm_joint_1', 'arm_joint_2', 'arm_joint_3', 'arm_joint_4', 'arm_joint_5']
-    _gripper_joint_names = ['gripper_finger_joint_l', 'gripper_finger_joint_r']
-    _end_effector_link = "gripper_pointer_link"    
+    arm_joint_names = ['arm_joint_1', 'arm_joint_2', 'arm_joint_3', 'arm_joint_4', 'arm_joint_5']
+    gripper_joint_names = ['gripper_finger_joint_l', 'gripper_finger_joint_r']
+    end_effector_link = "gripper_pointer_link"    
     
     def __init__(self):
         rospy.logdebug("YoubotGazeboProxy __init__")
-        self.positions = None   # stores the dictionary of joint positions
-        self.commands = None    # stores the list of commands to execute
+        super(YoubotGazeboProxy,self).__init__()
+        self.init_done = False  # indicates that the object was initialized 
     
     def initialize_node(self, node_name, arm_id_num):
         
@@ -35,11 +37,9 @@ class YoubotGazeboProxy(BaseProxy):
         
         # init moveit
         moveit_commander.roscpp_initialize(sys.argv)
-        self._group = moveit_commander.MoveGroupCommander("manipulator")
-        self._group.set_planning_time(5)
-        self._group.set_pose_reference_frame("base_link")
-        self._arm_goal = None
-        self._gripper_goal = None
+        self.arm_group = moveit_commander.MoveGroupCommander("manipulator")
+        self.arm_group.set_planning_time(8)
+        self.arm_group.set_pose_reference_frame("base_link")
         rospy.loginfo("planning group created for manipulator")
         
         #init ros node
@@ -56,14 +56,28 @@ class YoubotGazeboProxy(BaseProxy):
         self._ac_gripper = actionlib.SimpleActionClient(self._gripper_as_name, FollowJointTrajectoryAction)
         self._ac_gripper.wait_for_server()
         rospy.loginfo("Created gripper joint trajectory action client " + self._gripper_as_name)
-                
-                
-    def plan_arm(self, group, pose): 
-        group.clear_pose_targets()
-        group.set_pose_target(pose, self._end_effector_link)
-        plan = group.plan()
         
-        if len(self._arm_plan.joint_trajectory.points) == 0:
+        # set init done flag
+        self.init_done = True
+                
+                
+    def plan_arm(self, pose): 
+        '''
+        @param pose: a PoseStamped object
+        @precondition: initialize_node must be called first 
+        @return: boolean
+        @note: sets the intended goal in self
+        '''
+        # test for initialization
+        if self.init_done == False:
+            raise Exception("Object not initialized")
+        
+        # perform planning action 
+        self.arm_group.clear_pose_targets()
+        self.arm_group.set_pose_target(pose, self._end_effector_link)
+        plan = self.arm_group.plan()
+        
+        if len(plan.joint_trajectory.points) == 0:
             rospy.loginfo("plan not found for given pose")
             self._arm_goal = None
             return False
@@ -74,7 +88,7 @@ class YoubotGazeboProxy(BaseProxy):
             self._arm_goal.trajectory = copy.deepcopy(plan.joint_trajectory)
             return True        
                     
-    def move_arm(self, trajectory):
+    def move_arm(self):
         # Sends the goal to the action server.
         self._ac_arm.send_goal(self._arm_goal, feedback_cb=self.move_arm_feedback_cb)
     
@@ -97,18 +111,6 @@ class YoubotGazeboProxy(BaseProxy):
         self._ac_gripper.send_goal(goal)
         self._ac_gripper.wait_for_result()
         return self._ac_gripper.get_result()
-                    
-    def load_control_plan(self, path_to_dict_yaml, path_to_cmds_yaml):
-        # load the joint positions dictionary 
-        f = open(path_to_dict_yaml)
-        d = yaml.load(f)
-        self.positions = copy.deepcopy(d)
-        f.close()
-        # load the command sequence for this robot
-        f = open(path_to_dict_yaml)
-        d = yaml.load(f)
-        self.commands = copy.deepcopy(d)
-        f.close()
         
     def execute_control(self):
         if self.commands is None:
@@ -116,10 +118,49 @@ class YoubotGazeboProxy(BaseProxy):
         
         # loop through the command list
         for cmd in self.commands:
-            print type(cmd), cmd
-        
-       
-            
+            t = cmd['type']
+            spec = self.positions[cmd['spec']]
+            if t == 'sleep':
+                v = float(spec)
+                self.sleep(v)
+            elif t == 'move_gripper':
+                self.move_gripper(spec/1000.0)
+            elif t == 'move_arm':
+                rospy.logdebug("Received joint spec: ")
+                rospy.logdebug(cmd.spec)                
+                goal = FollowJointTrajectoryGoal()
+                goal.trajectory.joint_names = self.arm_joint_names
+                jtp = JointTrajectoryPoint()
+                jtp.positions = spec
+                goal.trajectory.points.append(jtp)
+                self._arm_goal = copy.deepcopy(goal)
+                self.move_arm()
+            elif t == 'plan_exec_arm':
+                raise NotImplementedError()
+                '''
+                pose = PoseStamped()
+                q = quaternion_from_euler(cmd.spec[3],cmd.spec[4],cmd.spec[5])
+                pose.header.frame_id = "base_link"
+                pose.pose.position.x = cmd.spec[0]
+                pose.pose.position.y = cmd.spec[1]
+                pose.pose.position.z = cmd.spec[2]
+                pose.pose.orientation.x = q[0]
+                pose.pose.orientation.y = q[1]
+                pose.pose.orientation.z = q[2]
+                pose.pose.orientation.w = q[3]  
+                if self.plan_arm(pose):
+                    rv = self.move_arm()
+                    rospy.logdebug("Move arm returned code " + str(rv))
+                else:
+                    rospy.logerr("trajectory not found")
+                    rospy.logdebug("pose specified to planner: ")
+                    rospy.logdebug(pose)
+                    raise Exception("trajectory not found")
+                    '''
+            else:
+                raise Exception("Invalid command type: " + str(cmd.type))
 
-        
-        
+
+
+
+
