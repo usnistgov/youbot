@@ -23,4 +23,4 @@ posttight_spot_place: [3.8, 1.75, -0.7, 0.85, 2.929]    # Post tight spot for pl
 opening: 22      # opening gap in mm
 closing: 9      # closing gap in mm. DO NOT REDUCE BELOW 8 mm! Gripper finger(s) may become out of place from biting too hard.
 SPECIAL: [3.8, 1.75, -0.7, 0.85, 2.929]  # USE FOR TESTING
-
+wait_for_ball: 1.2

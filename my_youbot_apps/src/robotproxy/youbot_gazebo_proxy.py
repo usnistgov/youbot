@@ -10,9 +10,9 @@ import sys
 import copy
 import rospy
 import moveit_commander
-from base_proxy import BaseProxy
-from geometry_msgs.msg import PoseStamped
-from tf.transformations import quaternion_from_euler
+from base_proxy import BaseProxy, ProxyCommand
+#from geometry_msgs.msg import PoseStamped
+#from tf.transformations import quaternion_from_euler
 from trajectory_msgs.msg import JointTrajectoryPoint
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
 import actionlib
@@ -24,13 +24,11 @@ class YoubotGazeboProxy(BaseProxy):
     gripper_joint_names = ['gripper_finger_joint_l', 'gripper_finger_joint_r']
     end_effector_link = "gripper_pointer_link"    
     
-    def __init__(self):
+    def __init__(self, node_name, arm_id_num):
         rospy.logdebug("YoubotGazeboProxy __init__")
-        super(YoubotGazeboProxy,self).__init__()
+        super(YoubotGazeboProxy,self).__init__(arm_id_num)
         self.init_done = False  # indicates that the object was initialized 
     
-    def initialize_node(self, node_name, arm_id_num):
-        
         # init object attributes
         self._arm_as_name = '/arm_' +str(arm_id_num) + '/arm_controller/follow_joint_trajectory'
         self._gripper_as_name = '/arm_' +str(arm_id_num) + '/gripper_controller/follow_joint_trajectory'        
@@ -103,60 +101,64 @@ class YoubotGazeboProxy(BaseProxy):
     def move_gripper(self, opening_mm): 
         # Creates a goal to send to the action server.
         goal = FollowJointTrajectoryGoal()
-        goal.trajectory.joint_names = self._gripper_joint_names 
+        goal.trajectory.joint_names = self.gripper_joint_names
         jtp = JointTrajectoryPoint()
-        jtp.positions = [opening_mm/2000, opening_mm/2000]
+        jtp.positions = [opening_mm/2000.0, opening_mm/2000.0]
+        jtp.velocities = [0, 0]
         jtp.time_from_start = rospy.Duration(1.0)
         goal.trajectory.points.append(jtp)
         self._ac_gripper.send_goal(goal)
         self._ac_gripper.wait_for_result()
         return self._ac_gripper.get_result()
-        
-    def execute_control(self):
+              
+    def control_loop(self):
         if self.commands is None:
             raise Exception('Command list is empty.  Was the control plan loaded?')
         
         # loop through the command list
         for cmd in self.commands:
-            t = cmd['type']
-            spec = self.positions[cmd['spec']]
-            if t == 'sleep':
+            
+            # process commands
+            t = cmd[ProxyCommand.key_command_type]
+            cmd_spec_str = cmd[ProxyCommand.key_command_spec] 
+            if not isinstance(cmd_spec_str, basestring):
+                spec = float(cmd_spec_str)
+            else:
+                spec = self.positions[cmd_spec_str]
+            rospy.loginfo("Command: " + t + " spec: " + str(cmd_spec_str) + "value: " + str(spec))
+            
+            # wait for dependency
+            self.wait_for_depend(cmd)
+            
+            # execute command
+            # could do this with a dictionary-based function lookup, but who cares
+            if t == 'none':
+                self.set_depend(cmd, True)            
+            elif t == 'sleep':
+                rospy.loginfo("sleep command")
                 v = float(spec)
-                self.sleep(v)
+                rospy.sleep(v)
+                self.set_depend(cmd, True)
             elif t == 'move_gripper':
-                self.move_gripper(spec/1000.0)
+                rospy.loginfo("gripper command")
+                self.move_gripper(spec)
+                self.set_depend(cmd, True)
             elif t == 'move_arm':
-                rospy.logdebug("Received joint spec: ")
-                rospy.logdebug(cmd.spec)                
+                rospy.loginfo("move_arm command")
+                rospy.logdebug(spec)                
                 goal = FollowJointTrajectoryGoal()
                 goal.trajectory.joint_names = self.arm_joint_names
                 jtp = JointTrajectoryPoint()
+                jtp.time_from_start = rospy.Duration(0.5)  # fudge factor for gazebo controller
                 jtp.positions = spec
+                jtp.velocities = [0]*len(spec)
                 goal.trajectory.points.append(jtp)
                 self._arm_goal = copy.deepcopy(goal)
                 self.move_arm()
+                self.set_depend(cmd, True)
             elif t == 'plan_exec_arm':
+                rospy.loginfo("plan and execute command not implemented")
                 raise NotImplementedError()
-                '''
-                pose = PoseStamped()
-                q = quaternion_from_euler(cmd.spec[3],cmd.spec[4],cmd.spec[5])
-                pose.header.frame_id = "base_link"
-                pose.pose.position.x = cmd.spec[0]
-                pose.pose.position.y = cmd.spec[1]
-                pose.pose.position.z = cmd.spec[2]
-                pose.pose.orientation.x = q[0]
-                pose.pose.orientation.y = q[1]
-                pose.pose.orientation.z = q[2]
-                pose.pose.orientation.w = q[3]  
-                if self.plan_arm(pose):
-                    rv = self.move_arm()
-                    rospy.logdebug("Move arm returned code " + str(rv))
-                else:
-                    rospy.logerr("trajectory not found")
-                    rospy.logdebug("pose specified to planner: ")
-                    rospy.logdebug(pose)
-                    raise Exception("trajectory not found")
-                    '''
             else:
                 raise Exception("Invalid command type: " + str(cmd.type))
 

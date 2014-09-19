@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<launch>
+
+	<node pkg="my_youbot_twoarm_collab" type="robot_proxy" name="robot_proxy" ns="arm_1">
+		<param name="arm_num" type="int" value="1" />
+	</node>  
+		  
+</launch>
+

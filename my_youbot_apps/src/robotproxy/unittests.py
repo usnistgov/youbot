@@ -32,12 +32,14 @@ def test_commands_list():
         print x
 
 def test_load_control_plan():
-    ygp = robotproxy.YoubotGazeboProxy()
-    ygp.load_control_plan(path_to_dict_yaml, path_to_cmds_yaml) 
+    try:
+        ygp = robotproxy.YoubotGazeboProxy("test_ygp", 1)
+        ygp.load_control_plan(path_to_dict_yaml, path_to_cmds_yaml)
+    except Exception as e:
+        print e
     
 def test_youbot_gazebo_proxy_move(): 
-    ygp = robotproxy.YoubotGazeboProxy()
-    ygp.initialize_node("test_ygp", 1)
+    ygp = robotproxy.YoubotGazeboProxy("test_ygp", 1)
     
     pose1 = PoseStamped()
     roll = 0
@@ -61,10 +63,9 @@ def test_youbot_gazebo_proxy_move():
         print "test failed. plan not found"
 
 def test_youbot_gazebo_proxy_exec():
-    ygp = robotproxy.YoubotGazeboProxy()
-    ygp.initialize_node("test_ygp", 1)
+    ygp = robotproxy.YoubotGazeboProxy("test_ygp", 1)
     ygp.load_control_plan(path_to_dict_yaml, path_to_cmds_yaml)    
-    ygp.execute_control()
+    ygp.control_loop()
 
 
 
