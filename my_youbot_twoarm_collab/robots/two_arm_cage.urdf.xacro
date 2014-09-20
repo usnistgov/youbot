@@ -9,12 +9,6 @@
   <!-- misc common stuff? -->
   <xacro:include filename="$(find youbot_description)/urdf/common.xacro" />
 
-  <!-- youbot base -->
-  <xacro:include filename="$(find youbot_description)/urdf/youbot_base/base.urdf.xacro" />
-
-  <!-- youbot plate -->
-  <xacro:include filename="$(find youbot_description)/urdf/youbot_plate/plate.urdf.xacro" /> 
-
   <!-- youbot arm -->
   <xacro:include filename="$(find youbot_description)/urdf/youbot_arm/arm.urdf.xacro"/>
 
@@ -44,7 +38,7 @@
   <link name="base_link">
     <visual>
       <geometry>
-        <box size="2.0 1.0 0.01"/>
+        <box size="2.0 1.0 0.0"/>
       </geometry>
     </visual>  	
     <inertial>
@@ -55,8 +49,7 @@
   </link>
   
   <xacro:youbot_arm name="arm" parent="base_link">
-    <!--<origin xyz="0.143 0 0.046" rpy="0 0 0" />-->
-    <origin xyz="1.0 0 0.056" rpy="0 0 0" /> <!-- x offset needs to be further verified -->
+    <origin xyz="0.25 0 0.04225" rpy="0 0 1.57075" /> 
   </xacro:youbot_arm>
 
   <xacro:youbot_gripper name="gripper" parent="arm_link_5">
@@ -64,8 +57,7 @@
   </xacro:youbot_gripper>
 
   <xacro:youbot_arm name="arm_2" parent="base_link">
-    <!--<origin xyz="-0.143 0 0.046" rpy="0 0 0" />-->
-    <origin xyz="-1.0 0 0.056" rpy="0 0 0" />  <!-- x offset needs to be further verified -->
+    <origin xyz="-0.25 0 0.04225" rpy="0 0 1.57075" />  
   </xacro:youbot_arm>
 
   <xacro:youbot_gripper name="gripper_2" parent="arm_2_link_5">

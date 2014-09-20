@@ -5,19 +5,16 @@
 		The world describes the surroundings of the robots.
 	/>-->
 	<arg name="world" default="empty_world"/>
+    <arg name="init_pos_x" default="0.0"/>
+    <arg name="init_pos_y" default="0.0"/>
+    <arg name="init_pos_z" default="0.0"/>
+	
 
 	<!-- Specify general arguments -->
 	<arg name="debug" 	default="false" /> 	<!-- debug mode -->
-	<arg name="info" 	default="false" /> 	<!-- print informational messages -->
+	<arg name="info" 	default="true" /> 	<!-- print informational messages -->
 	<arg name="gaz" 	default="true" /> 	<!-- run gazebo -->	
 	<arg name="tfs"		default="true" />	<!-- publish transforms -->
-
-	<!-- 
-		Setup the initial positions of the robots in gazebo
-	/>-->
-	<arg name="init_pos_x" default="0.0"/>
-	<arg name="init_pos_y" default="-0.5"/>
-	<arg name="init_pos_z" default="0.0"/>
 
 	<!-- 
 		Launch Gazebo with the world selected.
@@ -35,9 +32,15 @@
 	<!-- 
 		Spawn a robot controller plugin for gazebo
 	-->	
-	<node if="$(arg gaz)" pkg="gazebo_ros" type="spawn_model" 
-		name="spawn_robot" respawn="false" output="screen"
-		args="-param robot_description -urdf -x $(arg init_pos_x) -y $(arg init_pos_y) -z $(arg init_pos_z) -model youbot"/>  
+  	<node pkg="gazebo_ros" type="spawn_model" name="spawn_robot" respawn="false" output="screen"
+    	  args="-param robot_description
+          -urdf
+          -x $(arg init_pos_x)
+          -y $(arg init_pos_y)
+          -z $(arg init_pos_z)
+          -model youbot">
+  	</node>
+
 		  			  	
 	<!-- 
 		Starts the joint state controller gazebo plugin for the youbot
@@ -59,9 +62,7 @@
 	<!-- launch the robot state publisher -->
 	<node if="$(arg tfs)" pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
 		<param name="publish_frequency" type="double" value="10.0" />
-	</node>  
-
-    <node pkg="rviz" type="rviz" name="rviz" /> 
+	</node>   
 
 </launch>
 

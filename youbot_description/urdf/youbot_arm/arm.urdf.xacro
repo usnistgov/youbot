@@ -9,14 +9,12 @@
         <xacro:include filename="$(find youbot_description)/urdf/youbot_arm/limits.urdf.xacro" />
 
 	<!-- specifies the offset to include the 10mm table flange and the 3.225cm model offset -->
-	<xacro:property name="base_link_zoffset" value="0.04225"/>
 
 	<xacro:macro name="youbot_arm" params="parent name *origin">
 
 		<!-- joint between base_link and arm_0_link -->
 		<joint name="${name}_joint_0" type="fixed" >
-			<!--<insert_block name="origin" />-->
-			<origin xyz="0.00 0.0 ${base_link_zoffset}" rpy="0 0 0" />
+			<insert_block name="origin" />
 			<parent link="${parent}" />
 			<child link="${name}_link_0" />
 			

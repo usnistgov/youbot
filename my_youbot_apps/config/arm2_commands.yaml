@@ -20,19 +20,19 @@
     type: move_gripper
     spec: opening 
 -
-    type: move_arm: 
+    type: move_arm 
     spec: cand
 -
-    type: move_arm: 
+    type: move_arm 
     spec: preload
 -
-    type: move_arm: 
+    type: move_arm 
     spec: load  
 -
     type: move_gripper
     spec: closing
 -
-    type: move_arm: 
+    type: move_arm 
     spec: preload 
 -
     type: move_arm
@@ -44,7 +44,7 @@
     type: move_gripper
     spec: opening
 -
-    type: move_arms
+    type: move_arm
     spec: premach2
 -
     type: move_arm
@@ -68,22 +68,22 @@
     type: move_arm
     spec: cand
 -
-    type: move_arms
+    type: move_arm
     spec: preload
 -
-    move_arms
+    type: move_arm
     spec: load
 -
     type: move_gripper
     spec: opening
 -
-    type: move_arm: 
+    type: move_arm 
     spec: preload
 -
-    type: move_arm: 
+    type: move_arm 
     spec: premach2
 -
-    type: move_arm: 
+    type: move_arm 
     spec: mach2
 -
     type: move_gripper
@@ -98,7 +98,7 @@
     type: move_arm
     spec: prepick_rob2
 -
-    type: move_arm:
+    type: move_arm
     spec: pick_rob2
 -
     type: move_gripper
@@ -109,7 +109,7 @@
     #type: sleep
     #seconds: 1.5 
 -
-	type: move_arm: 
+	type: move_arm 
     spec: prepick_rob2
 -
 	type: move_arm

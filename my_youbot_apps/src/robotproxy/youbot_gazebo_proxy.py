@@ -34,16 +34,20 @@ class YoubotGazeboProxy(BaseProxy):
         self._gripper_as_name = '/arm_' +str(arm_id_num) + '/gripper_controller/follow_joint_trajectory'        
         
         # init moveit
-        moveit_commander.roscpp_initialize(sys.argv)
-        self.arm_group = moveit_commander.MoveGroupCommander("manipulator")
-        self.arm_group.set_planning_time(8)
-        self.arm_group.set_pose_reference_frame("base_link")
-        rospy.loginfo("planning group created for manipulator")
+        try:
+            moveit_commander.roscpp_initialize(sys.argv)
+            self.arm_group = moveit_commander.MoveGroupCommander("manipulator")
+            self.arm_group.set_planning_time(8)
+            self.arm_group.set_pose_reference_frame("base_link")
+            rospy.loginfo("planning group created for manipulator")
+        except:
+            pass
         
         #init ros node
         rospy.init_node(node_name, anonymous=False)
         rospy.loginfo("ROS node initialized: " + rospy.get_name())
         rospy.loginfo("node namespace is : " + rospy.get_namespace())
+        rospy.loginfo("node uri is : " + rospy.get_node_uri())
         
         # init arm action client
         self._ac_arm = actionlib.SimpleActionClient(self._arm_as_name, FollowJointTrajectoryAction)

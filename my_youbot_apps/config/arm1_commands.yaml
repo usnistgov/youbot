@@ -14,7 +14,7 @@
 
 -
     type: sleep
-    seconds: 0.0
+    spec: 0.0
     set_depend: /arm_1/ready_to_start 
 -
     type: move_gripper
