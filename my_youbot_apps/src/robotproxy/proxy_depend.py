@@ -20,6 +20,10 @@ class ProxyDepends(object):
         self._pub = rospy.Publisher("robot_depends", UpdateDependency, queue_size=10)
         rospy.loginfo("publisher created")
         
+    def transmit_all_update_depend(self):
+        for name in self._d.keys():
+            self.transmit_update_depend(name, self._d[name])
+                    
     def transmit_update_depend(self, name, value):
         msg = UpdateDependency(name, value)
         self._pub.publish(msg)
@@ -51,4 +55,5 @@ class ProxyDepends(object):
             else:
                 rospy.loginfo("dependency timeout after "  + td + " seconds")
                 raise Exception("system timeout", "dependency timeout after "  + td + " seconds")
-            
+            #self.transmit_all_update_depend() 
+

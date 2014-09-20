@@ -4,7 +4,7 @@
 
 	<node pkg="my_youbot_twoarm_collab" 
 			type="robot_gazebo_proxy_exec.py" 
-			name="robot_proxy"
+			name="robot_proxy_arm2"
 			output="screen">
 		<param name="arm_num" type="int" value="2" />
 		<param name="joint_pose_dict" type="string" value="$(find my_youbot_apps)/config/joint_pos_defs.yaml"/>

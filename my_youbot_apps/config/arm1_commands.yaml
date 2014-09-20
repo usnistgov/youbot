@@ -5,7 +5,7 @@
 # Put a - between each entry 
 # Specify the following:
 #   name: name of action (optional)
-#   type: plan_exec_arm, move_arm, move_gripper, sleep
+#   type: plan_exec_arm, move_arm, move_gripper, sleep, 'noop'
 #   spec:  for all move types, specify the name of the goal as joint positions
 #             for all plan types, specify the eef position as [x, y, z, r, p, y]
 #             for sleep, specify seconds as a float
@@ -13,10 +13,11 @@
 #   set_depend: name of dependency to update once action is complete
 
 -
-    type: sleep
-    spec: 0.0
+    type: 'noop'
     set_depend: /arm_1/ready_to_start 
 -
+    wait_depend: /arm_2/ready_to_start
+    clear_depend: /arm_1/ready_to_start
     type: move_gripper
     spec: opening 
 -
@@ -86,7 +87,7 @@
     # This is just to wait for the ball to roll. Can be longer if necessary.
     # Note: this will eventually be a proximity sensor
     type: sleep
-    seconds: 1.5 
+    spec: 1.5 
 -
     type: move_arm
     spec: pick_rob1

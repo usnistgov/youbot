@@ -10,7 +10,6 @@
 import rospy
 import robotproxy 
 
-
 if __name__=="__main__":
     print "NS: ", rospy.get_namespace()
     print "NAME: ", rospy.get_name()
@@ -23,3 +22,8 @@ if __name__=="__main__":
     ygp = robotproxy.YoubotGazeboProxy("robot_proxy",arm_id)
     ygp.load_control_plan(path_to_posedict_yaml, path_to_cmds_yaml)
     ygp.control_loop()
+    
+    
+    
+    
+    

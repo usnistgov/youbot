@@ -123,28 +123,32 @@ class YoubotGazeboProxy(BaseProxy):
         for cmd in self.commands:
             
             # process commands
+            cmd_spec_str = None
+            spec = None
             t = cmd[ProxyCommand.key_command_type]
-            cmd_spec_str = cmd[ProxyCommand.key_command_spec] 
-            if not isinstance(cmd_spec_str, basestring):
-                spec = float(cmd_spec_str)
-            else:
-                spec = self.positions[cmd_spec_str]
-            rospy.loginfo("Command: " + t + " spec: " + str(cmd_spec_str) + "value: " + str(spec))
-            
-            # wait for dependency
-            self.wait_for_depend(cmd)
-            
+            if not (t == "noop"):
+                cmd_spec_str = cmd[ProxyCommand.key_command_spec]
+                if not isinstance(cmd_spec_str, basestring):
+                    spec = float(cmd_spec_str)
+                else:
+                    spec = self.positions[cmd_spec_str]
+                rospy.loginfo("Command type: " + t + ", spec: " + str(cmd_spec_str) + ", value: " + str(spec))
+                       
             # execute command
             # could do this with a dictionary-based function lookup, but who cares
-            if t == 'none':
+            if t == 'noop':
+                rospy.loginfo("Command type: noop")
+                self.wait_for_depend(cmd)
                 self.set_depend(cmd, True)            
             elif t == 'sleep':
                 rospy.loginfo("sleep command")
+                self.wait_for_depend(cmd)
                 v = float(spec)
                 rospy.sleep(v)
                 self.set_depend(cmd, True)
             elif t == 'move_gripper':
                 rospy.loginfo("gripper command")
+                self.wait_for_depend(cmd)
                 self.move_gripper(spec)
                 self.set_depend(cmd, True)
             elif t == 'move_arm':
