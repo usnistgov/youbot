@@ -24,14 +24,21 @@ class YoubotGazeboProxy(BaseProxy):
     gripper_joint_names = ['gripper_finger_joint_l', 'gripper_finger_joint_r']
     end_effector_link = "gripper_pointer_link"    
     
-    def __init__(self, node_name, arm_id_num):
+    def __init__(self, node_name):
         rospy.logdebug("YoubotGazeboProxy __init__")
-        super(YoubotGazeboProxy,self).__init__(arm_id_num)
+        super(YoubotGazeboProxy,self).__init__()
         self.init_done = False  # indicates that the object was initialized 
-    
+        
+        # init ros node
+        rospy.init_node(node_name, anonymous=True)
+        rospy.loginfo("ROS node initialized: " + rospy.get_name())
+        rospy.loginfo("node namespace is : " + rospy.get_namespace())
+        rospy.loginfo("node uri is : " + rospy.get_node_uri())
+        
         # init object attributes
-        self._arm_as_name = '/arm_' +str(arm_id_num) + '/arm_controller/follow_joint_trajectory'
-        self._gripper_as_name = '/arm_' +str(arm_id_num) + '/gripper_controller/follow_joint_trajectory'        
+        self.arm_num = rospy.get_param("~arm_num")
+        self._arm_as_name = '/arm_' + str(self.arm_num) + '/arm_controller/follow_joint_trajectory'
+        self._gripper_as_name = '/arm_' +str(self.arm_num) + '/gripper_controller/follow_joint_trajectory'        
         
         # init moveit
         try:
@@ -42,13 +49,7 @@ class YoubotGazeboProxy(BaseProxy):
             rospy.loginfo("planning group created for manipulator")
         except:
             pass
-        
-        #init ros node
-        rospy.init_node(node_name, anonymous=False)
-        rospy.loginfo("ROS node initialized: " + rospy.get_name())
-        rospy.loginfo("node namespace is : " + rospy.get_namespace())
-        rospy.loginfo("node uri is : " + rospy.get_node_uri())
-        
+
         # init arm action client
         self._ac_arm = actionlib.SimpleActionClient(self._arm_as_name, FollowJointTrajectoryAction)
         self._ac_arm.wait_for_server()
@@ -121,6 +122,9 @@ class YoubotGazeboProxy(BaseProxy):
         
         # loop through the command list
         for cmd in self.commands:
+
+            # wait for proxy to be in active state
+            self.wait_for_state(self._proxy_state_running)
             
             # process commands
             cmd_spec_str = None
@@ -134,23 +138,21 @@ class YoubotGazeboProxy(BaseProxy):
                     spec = self.positions[cmd_spec_str]
                 rospy.loginfo("Command type: " + t + ", spec: " + str(cmd_spec_str) + ", value: " + str(spec))
                        
+            # check for any wait depends
+            self.wait_for_depend(cmd)
+
             # execute command
             # could do this with a dictionary-based function lookup, but who cares
             if t == 'noop':
                 rospy.loginfo("Command type: noop")
                 self.wait_for_depend(cmd)
-                self.set_depend(cmd, True)            
             elif t == 'sleep':
                 rospy.loginfo("sleep command")
-                self.wait_for_depend(cmd)
                 v = float(spec)
                 rospy.sleep(v)
-                self.set_depend(cmd, True)
             elif t == 'move_gripper':
                 rospy.loginfo("gripper command")
-                self.wait_for_depend(cmd)
                 self.move_gripper(spec)
-                self.set_depend(cmd, True)
             elif t == 'move_arm':
                 rospy.loginfo("move_arm command")
                 rospy.logdebug(spec)                
@@ -163,12 +165,17 @@ class YoubotGazeboProxy(BaseProxy):
                 goal.trajectory.points.append(jtp)
                 self._arm_goal = copy.deepcopy(goal)
                 self.move_arm()
-                self.set_depend(cmd, True)
             elif t == 'plan_exec_arm':
                 rospy.loginfo("plan and execute command not implemented")
                 raise NotImplementedError()
             else:
                 raise Exception("Invalid command type: " + str(cmd.type))
+
+            # check for any set dependencies action
+            self.set_depend(cmd)
+
+            # check for any clear dependencies action
+            self.clear_depend(cmd)
 
 
 

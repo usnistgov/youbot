@@ -11,12 +11,11 @@
 #             for sleep, specify seconds as a float
 #   wait_depend: full name of dependency
 #   set_depend: name of dependency to update once action is complete
+
 -
     type: noop
-    set_depend: /arm_2/ready_to_start 
--
-    wait_depend: /arm_1/ready_to_start
-    clear_depend: /arm_2/ready_to_start    
+    wait_depend: /system/begin
+- 
     type: move_gripper
     spec: opening 
 -
@@ -53,7 +52,7 @@
     type: move_arm
     spec: pretrans2
 -
-    set_depend: /arm_1/ready_with_ball
+    wait_depend: /arm_1/ready_with_ball
     type: move_arm
     spec: trans2
 -

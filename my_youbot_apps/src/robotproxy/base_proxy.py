@@ -22,8 +22,16 @@ class ProxyCommand():
 class BaseProxy(object):
     
     __metaclass__ = ABCMeta
+
+    _proxy_state_stopped = -1
+    _proxy_state_running = 1
     
-    def __init__(self, arm_num):
+    def __init__(self):
+        '''
+        @todo: implement emergency stop
+        '''
+        self.proxy_state = self._proxy_state_running
+        self.arm_num = None
         self._frame_id = "base_link"
         self.positions = None   # stores the dictionary of joint positions
         self.commands =  None   # stores the list of commands to execute
@@ -33,9 +41,12 @@ class BaseProxy(object):
         self._frame_id = None       # name of the base frame
         self._arm_goal = None       # contains the current goal for the arm 
         self._gripper_goal = None   # contains the current goal for the gripper
-        self.depends_status = ProxyDepends(arm_num)
+        self.depends_status = ProxyDepends(self.arm_num)
         
-    
+    def wait_for_state(self, state):
+        while True: 
+            if self.proxy_state == state: break
+
     def load_control_plan(self, path_to_dict_yaml, path_to_cmds_yaml):
         # load the joint positions dictionary 
         self.positions = JointPoseDictionary(path_to_dict_yaml)
@@ -49,6 +60,7 @@ class BaseProxy(object):
     def wait_for_depend(self, cmd):
         '''
         @param cmd: a dictionary containing type, spec, and optional depend 
+        @todo: make this support a list of depends
         '''
         if cmd.has_key(ProxyCommand.key_command_wait_depend):
             wait_depend_name = cmd[ProxyCommand.key_command_wait_depend]
@@ -57,16 +69,18 @@ class BaseProxy(object):
     def clear_depend(self, cmd):
         '''
         @param cmd: a dictionary containing type, spec, and optional depend 
+        @todo: make this support a list of depends
         '''
         if cmd.has_key(ProxyCommand.key_command_wait_depend):        
             self.depends_status.transmit_update_depend(cmd[ProxyCommand.key_command_wait_depend], False)
 
-    def set_depend(self, cmd, value):
+    def set_depend(self, cmd):
         '''
         @param cmd: a dictionary containing type, spec, and optional depend 
+        @todo: make this support a list of depends
         '''
         if cmd.has_key(ProxyCommand.key_command_set_depend):        
-            self.depends_status.transmit_update_depend(cmd[ProxyCommand.key_command_set_depend], value)
+            self.depends_status.transmit_update_depend(cmd[ProxyCommand.key_command_set_depend], True)
             
     @property
     def frame_id(self): 
