@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+
+	<!-- launch gazebo for youbot -->
+	<include file="$(find youbot_apps)/launch/apps.launch">
+
+		<arg name="world" 	value="empty_world"/>
+		<arg name="debug" 	value="false" />
+		<arg name="info" 	value="true" />
+		<arg name="gaz" 	value="true" />	
+		<arg name="tfs" 	value="true" />	
+
+	</include>
+
+</launch>
+
+

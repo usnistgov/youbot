@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package>
+  <name>youbot_msgs</name>
+  <version>0.1.0</version>
+  <description>Contains msgs used by the youbot* set of packages</description>
+  <license>Public Domain</license>
+  <author email="rick.candell@nist.gov">Rick Canell</author> 
+  <maintainer email="rick.candell@nist.gov">Rick Canell</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  
+  <build_depend>std_msgs</build_depend>
+  <run_depend>std_msgs</run_depend>
+  
+  <build_depend>message_generation</build_depend>
+  <run_depend>message_runtime</run_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- You can specify that this package is a metapackage here: -->
+    <!-- <metapackage/> -->
+
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
+

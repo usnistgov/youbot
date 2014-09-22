@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+
+	<!-- launch moveit for the youbot -->
+	<include file="$(find youbot_apps)/launch/apps.launch">
+
+		<arg name="db" 		value="false" />
+		<arg name="debug" 	value="false" />
+		<arg name="info" 	value="true" />
+		<arg name="moveit" 	value="true" /> 
+		<arg name="tfs"		value="false" />
+		<arg name="allow_trajectory_execution" 	value="true"/>  
+		<arg name="fake_execution" 		value="true"/>
+
+	</include>
+
+</launch>
+

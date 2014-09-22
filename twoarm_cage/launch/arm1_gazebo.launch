@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<launch>
+
+	<node pkg="twoarm_cage" 
+			type="robot_gazebo_proxy_exec.py" 
+			name="robot_proxy_1"
+			output="screen">
+
+		<param name="arm_num" type="int" value="1" />
+		<param name="~joint_pose_dict" type="string" value="$(find youbot_apps)/config/joint_pos_defs.yaml"/>
+		<param name="~cmd_seq" type="string" value="$(find youbot_apps)/config/arm1_commands.yaml" />
+
+	</node>  
+		  
+</launch>
+

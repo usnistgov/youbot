@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<launch>
+
+	<!-- 
+		The world describes the surroundings of the robots.
+	/>-->
+	<arg name="world" default="empty_world"/>
+    <arg name="init_pos_x" default="0.0"/>
+    <arg name="init_pos_y" default="0.0"/>
+    <arg name="init_pos_z" default="0.0"/>
+	
+
+	<!-- Specify general arguments -->
+	<arg name="debug" 	default="false" /> 	<!-- debug mode -->
+	<arg name="info" 	default="true" /> 	<!-- print informational messages -->
+	<arg name="gaz" 	default="true" /> 	<!-- run gazebo -->	
+	<arg name="tfs"		default="true" />	<!-- publish transforms -->
+
+	<!-- 
+		Launch Gazebo with the world selected.
+		empty.launch under the youbot package will call the 
+		empty_world launch file passing the arguments to gazebo.
+	/>-->
+	<include file="$(find youbot_apps)/launch/$(arg world).launch" if="$(arg gaz)"/>
+
+	<!-- 
+		Store description of the youbot urdf (xacro) in the parameter server.
+	/>-->
+	<param name="robot_description" 
+		command="$(find xacro)/xacro.py $(find twoarm_cage)/robots/two_arm_cage.urdf.xacro" />
+
+	<!-- 
+		Spawn a robot controller plugin for gazebo
+	-->	
+  	<node pkg="gazebo_ros" type="spawn_model" name="spawn_robot" respawn="false" output="screen"
+    	  args="-param robot_description
+          -urdf
+          -x $(arg init_pos_x)
+          -y $(arg init_pos_y)
+          -z $(arg init_pos_z)
+          -model twoarm_cage">
+  	</node>
+
+		  			  	
+	<!-- 
+		Starts the joint state controller gazebo plugin for the youbot
+		parameters are added to the parameter server through the 
+		use of yaml files.
+	-->
+	<include if="$(arg gaz)" file="$(find youbot_gazebo_control)/launch/joint_state_controller.launch" />  
+
+	<!-- launch arm and gripper controller -->
+	<include if="$(arg gaz)" file="$(find youbot_gazebo_control)/launch/arm_controller.launch" > 
+		<arg name="arm_name" value="arm_1"/>
+	</include>  
+	
+	<!-- launch arm and gripper controller -->
+	<include if="$(arg gaz)" file="$(find youbot_gazebo_control)/launch/arm_controller.launch" > 
+		<arg name="arm_name" value="arm_2"/>
+	</include>  
+
+	<!-- launch the robot state publisher -->
+	<node if="$(arg tfs)" pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+		<param name="publish_frequency" type="double" value="10.0" />
+	</node>   
+
+</launch>
+
+

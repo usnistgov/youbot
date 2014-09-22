@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+
+	<!-- launch moveit for the youbot -->
+	<include file="$(find youbot_apps)/launch/apps.launch">
+
+		<arg name="db" 		value="false" />
+		<arg name="debug" 	value="false" />
+		<arg name="info" 	value="true" />
+		<arg name="tfs"		value="true" />
+
+	</include>
+
+	 <node pkg="rviz" type="rviz" name="rviz" /> 
+
+</launch>
+

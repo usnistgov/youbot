@@ -12,10 +12,10 @@ This repository contains many different ROS packages required to run the youbot 
 - **youbot_description**
 This package contains all of the URDF and XACRO files that describe the build and kinematics of the robot.  Some minor changes have been made from the original debian source.
 
-- **my\_youbot\_moveit**
+- **youbot_moveit**
 This package was created using the MoveIt! Setup Assistant.  Most launch files and config files were created using this tool.  The contents of this package are described in the following sections.
 
-- **my_youbot_apps**
+- **youbot_apps**
 This package contains scripts and launch files to run the robot.  
 
 # Installation
@@ -40,7 +40,7 @@ sudo apt-get install ros-hydro-moveit-full
 
 ```
 cd ~/catkin_ws/src
-git clone https://github.com/NIST-ICS-SEC-TB/youbot.git
+git clone [this-repository-url]
 ```
 
 # Running the Apps
@@ -49,19 +49,19 @@ git clone https://github.com/NIST-ICS-SEC-TB/youbot.git
 Open a terminal and execute the following command.  This will launch gazebo and moveit.  
 
 ```
-roslaunch my_youbot_apps gazebo.launch
+roslaunch youbot_apps gazebo.launch
 ```
 
 Open a new terminal and run:
 
 ```
-roslaunch my_youbot_apps moveit.launch
+roslaunch youbot_apps moveit.launch
 ```
 
 Open a new terminal and run:
 
 ```
-rosrun my_youbot_apps my_youbot_gazebo_exec.py
+rosrun youbot_apps youbot_gazebo_exec.py
 ```
 
 This will execute a series of poses specified in the python code.  This script will only work with Gazebo.  Some modification is required for interoperabililty with the Youbot hardware.

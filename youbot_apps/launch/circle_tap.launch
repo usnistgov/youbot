@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+
+	<arg name="use_brics" default="true"/>  <!-- use the robot driver interface -->
+	<!-- <arg name="use_brics" default="false"/> -->  <!-- use the action server interface, works with gazebo and sometimes youbot -->
+
+	<!--  start the circle_tap node -->
+	<node name="circle_tap" pkg="youbot_apps" type="circle_tap.py" args="$(arg use_brics)" output="screen" />
+
+</launch>
+
+

@@ -2,10 +2,10 @@
 <package>
   <name>youbot_description</name>
   <version>0.8.0</version>
-  <description>Robot descriptions in form of URDF files and meshes</description>
+  <description>Robot descriptions in form of URDF files and meshes for the NIST ICS Lab
+  </description>
 
-  <maintainer email="nowak@locomotec.com">Walter Nowak</maintainer>
-  <maintainer email="blumenthal@locomotec.com">Sebastian Blumenthal</maintainer>
+  <maintainer email="rick.candell@nist.gov">Walter Nowak</maintainer>
 
   <license>GPLv3</license>
 
