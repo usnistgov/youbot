@@ -43,6 +43,9 @@ class BaseProxy(object):
         self._arm_goal = None       # contains the current goal for the arm 
         self._gripper_goal = None   # contains the current goal for the gripper
         self.depends_status = ProxyDepends(self.arm_num) 
+
+        # this will be a dictionary of Thread Event objects
+        self.locks = {}
         
     def wait_for_state(self, state):
         while True: 
@@ -83,15 +86,10 @@ class BaseProxy(object):
         if cmd.has_key(ProxyCommand.key_command_set_depend):        
             self.depends_status.transmit_update_depend(cmd[ProxyCommand.key_command_set_depend], True)
 
-    def measure_euclidean_distance(target_positions, actual_positions):
-        '''
-        @return: float 
-        @todo: compare goal joint positions to actual joint positions
-        '''
-        # calculate sqrt( arm_1/joint_states**2 -- target_positions**2 )
-        # add threading event to lock the variable until operating completes
+    def measure_euclidean_distance(x, y):
+        # todo: add threading event to lock the variable until operating completes
         #   use finaly to ensure lock is released
-        return numpy.sqrt(numpy.sum((target_positions-actual_positions)**2))            
+        return numpy.sqrt(numpy.sum((x-y)**2))            
             
     @property
     def frame_id(self): 

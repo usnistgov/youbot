@@ -44,17 +44,6 @@ class YouboProxy(BaseProxy):
         # todo: create thread event object for joint_states variable
         self._joint_states_topic = rospy.get_param("~joint_states_topic")
         self._joint_states_sub = rospy.Subscriber(self._joint_states_topic, JointState, self.joint_states_cb)  
-        
-    def joint_states_cb(self, data):
-        try:
-            # todo: wait for lock release
-            self._joint_states = data
-        except:
-            pass
-        finally:
-            # add threading event to lock the variable until operating completes
-            #   use finaly to ensure lock is released
-            pass
 
         # Gripper distance tolerance: 1 mm 
         self.gripper_distance_tol = rospy.get_param("~gripper_distance_tol", 0.001) 
@@ -82,7 +71,17 @@ class YouboProxy(BaseProxy):
         # set init done flag
         self.init_done = True
                 
-                
+    def joint_states_cb(self, data):
+        try:
+            # todo: wait for lock release
+            self._joint_states = data
+        except:
+            pass
+        finally:
+            # add threading event in BaseProxy to lock the variable until operating completes
+            #   use finaly to ensure lock is released
+            pass
+                            
     def plan_arm(self, pose): 
         '''
         @param pose: a PoseStamped object
@@ -103,16 +102,20 @@ class YouboProxy(BaseProxy):
             jp.positions.append(copy.deepcopy(jv))
         return jp
 
-    def move_arm(self):
-        # Sends the goal to the action server.
-        self._ac_arm.send_goal(self._arm_goal, feedback_cb=self.move_arm_feedback_cb)
-    
-        # Waits for the server to finish performing the action.
-        self._ac_arm.wait_for_result()  
-    
-        # get the result code
-        return self._ac_arm.get_result()    
-    
+    def move_arm(self, positions):    
+        self._arm_goal = copy.deepcopy(spec)
+        jp = YoubotProxy.make_brics_msg_arm(positions)
+        rospy.logdebug("brics message created")
+        rospy.logdebug(jp)
+        r = rospy.Rate(50)
+        t0 = rospy.get_rostime()
+        while not rospy.is_shutdown():
+            if BaseProxy.measure_euclidean_distance(self._joint_states_arm, positions) < self.joint_distance_tol:
+                break        
+            self._arm_pub.publish(jp)
+            r.sleep()
+
+
     def make_brics_msg_gripper(opening_m):
 
         # Turn a desired gripper opening into a brics-friendly message    
@@ -153,7 +156,7 @@ class YouboProxy(BaseProxy):
         while not rospy.is_shutdown():
             rospy.loginfo("moving gripper")
             self._gripper_pub.publish(jp)
-            if BaseProxy.measure_euclidean_distance([opening_m/2 opening_m/2], ) < self.gripper_distance_tol:
+            if BaseProxy.measure_euclidean_distance([opening_m/2 opening_m/2], self._joint_states_arm) < self.gripper_distance_tol:
                 break 
             r.sleep()   
 
@@ -196,16 +199,8 @@ class YouboProxy(BaseProxy):
                 self.move_gripper(spec)
             elif t == 'move_arm':
                 rospy.loginfo("move_arm command")
-                rospy.logdebug(spec)                
-                goal = FollowJointTrajectoryGoal()
-                goal.trajectory.joint_names = self.arm_joint_names
-                jtp = JointTrajectoryPoint()
-                jtp.time_from_start = rospy.Duration(0.5)  # fudge factor for gazebo controller
-                jtp.positions = spec
-                jtp.velocities = [0]*len(spec)
-                goal.trajectory.points.append(jtp)
-                self._arm_goal = copy.deepcopy(goal)
-                self.move_arm()
+                rospy.logdebug(spec)
+                self.move_arm(spec)
             elif t == 'plan_exec_arm':
                 rospy.loginfo("plan and execute command not implemented")
                 raise NotImplementedError()
