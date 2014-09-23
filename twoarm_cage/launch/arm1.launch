@@ -40,9 +40,23 @@ or enable the USE_SETCAP flag in the cmake file and recompile again.
 	<!-- Start the driver. NOTE: Every joint topic is mapped to armName/joint_states -->
 	<node name="youbot_driver" pkg="youbot_driver_ros_interface" type="youbot_driver_ros_interface" output="screen">
 			<remap from="base/joint_states" to="joint_states"/> 
-			<remap from="arm_1/joint_states" to="joint_states" /> 
+			<!-- <remap from="arm_1/joint_states" to="joint_states" /> -->
 			<!--<remap from="arm_2/joint_states" to="joint_states" />-->
 	</node>
+
+	<node pkg="twoarm_cage" 
+			type="robot_proxy_exec.py" 
+			name="robot_proxy_1"
+			output="screen">
+
+		<param name="arm_num" type="int" value="1" />
+		<param name="~joint_pose_dict" type="string" value="$(find youbot_apps)/config/joint_pos_defs.yaml"/>
+		<param name="~cmd_seq" type="string" value="$(find youbot_apps)/config/arm1_commands.yaml" />
+		<param name="~joint_states_topic" type="string" value="joint_states" />
+		<param name="~gripper_distance_tol" type="float" value="0.001" />
+		<param name="~joint_distance_tol" type="float" value="0.02" />
+
+	</node>  	
 		  
 </launch>
 
