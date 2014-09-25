@@ -16,8 +16,7 @@ from base_proxy import BaseProxy, ProxyCommand
 from brics_actuator.msg import JointPositions, JointValue
 from sensor_msgs.msg import JointState
 
-
-class YouboProxy(BaseProxy):
+class YoubotProxy(BaseProxy):
     
     # class attributes
     arm_joint_names = ['arm_joint_1', 'arm_joint_2', 'arm_joint_3', 'arm_joint_4', 'arm_joint_5']
@@ -39,8 +38,8 @@ class YouboProxy(BaseProxy):
         self.arm_num = rospy.get_param("~arm_num")
 
         # init joint_states subscriber
-        self._joint_states_arm = None
-        self._joint_states_gripper = None        
+        self._joint_states_arm = [0]*5
+        self._joint_states_gripper = [0]*2        
         # todo: create thread event object for joint_states variable
         self._joint_states_topic = rospy.get_param("~joint_states_topic")
         self._joint_states_sub = rospy.Subscriber(self._joint_states_topic, JointState, self.joint_states_cb)  
@@ -48,7 +47,7 @@ class YouboProxy(BaseProxy):
         # Gripper distance tolerance: 1 mm 
         self.gripper_distance_tol = rospy.get_param("~gripper_distance_tol", 0.001) 
         # Joint distance tolerance: 1/10 radian tolerance (1.2 degrees)
-        self.joint_distance_tol = rospy.get_param("~joint_distance_tol",0.02)
+        self.arm_joint_distance_tol = rospy.get_param("~joint_distance_tol",0.025)
         
         # init moveit
         try:
@@ -74,9 +73,11 @@ class YouboProxy(BaseProxy):
     def joint_states_cb(self, data):
         try:
             # todo: wait for lock release
-            self._joint_states = data
+            for name in self.arm_joint_names:
+                i = data.name.index(name)
+                self._joint_states_arm[i] = data.position[i]
         except:
-            pass
+            print "an error occurred"
         finally:
             # add threading event in BaseProxy to lock the variable until operating completes
             #   use finaly to ensure lock is released
@@ -91,7 +92,8 @@ class YouboProxy(BaseProxy):
         '''
         raise NotImplementedError 
 
-    def make_brics_msg_arm(positions):
+    @classmethod
+    def make_brics_msg_arm(cls, positions):
         # create joint positions message
         jp = JointPositions()
         for ii in range(5):
@@ -103,24 +105,27 @@ class YouboProxy(BaseProxy):
         return jp
 
     def move_arm(self, positions):    
-        self._arm_goal = copy.deepcopy(spec)
+        self._arm_goal = copy.deepcopy(positions)
         jp = YoubotProxy.make_brics_msg_arm(positions)
         rospy.logdebug("brics message created")
         rospy.logdebug(jp)
         r = rospy.Rate(50)
-        t0 = rospy.get_rostime()
         while not rospy.is_shutdown():
-            if BaseProxy.measure_euclidean_distance(self._joint_states_arm, positions) < self.joint_distance_tol:
+            d = BaseProxy.measure_euclidean_distance(self._joint_states_arm, positions)
+            rospy.loginfo("arm tol setting: " + str(self.arm_joint_distance_tol))
+            rospy.loginfo("moved arm to position error of: " + str(d))
+            if d < self.arm_joint_distance_tol:
+                rospy.loginfo("moved arm to position error of: " + str(d))
                 break        
             self._arm_pub.publish(jp)
             r.sleep()
 
-
-    def make_brics_msg_gripper(opening_m):
-
+    @classmethod
+    def make_brics_msg_gripper(cls, opening_m):
+        
         # Turn a desired gripper opening into a brics-friendly message    
-        left = opening_m/2.
-        right = opening_m/2.
+        left = opening_m/2.0
+        right = opening_m/2.0
         # create joint positions message
         jp = JointPositions()
 
@@ -143,22 +148,31 @@ class YouboProxy(BaseProxy):
 
         return jp    
 
-    def move_gripper(self, opening_m): 
+    def move_gripper(self, opening_mm): 
         # ALERT! Make sure width of opening is no larger than 0.023 m (23 mm)
-        if opening_m > 0.23:
-            raise Exception("gripper opening is too large: " + str(opening_m))
-        jp = YoubotProxy.make_brics_msg_gripper(opening_m)
+        if opening_mm > 23:
+            raise Exception("gripper opening is too large: " + str(opening_mm))
+        
+        jp = YoubotProxy.make_brics_msg_gripper(opening_mm/1000)
         rospy.logdebug("make_brics_msg_gripper position message")
         rospy.logdebug(jp)
 
         # Initialize the timer for gripper publisher
-        r = rospy.Rate(10) # 10hz
+        r = rospy.Rate(30) 
         while not rospy.is_shutdown():
             rospy.loginfo("moving gripper")
             self._gripper_pub.publish(jp)
-            if BaseProxy.measure_euclidean_distance([opening_m/2 opening_m/2], self._joint_states_arm) < self.gripper_distance_tol:
-                break 
-            r.sleep()   
+            d = self.measure_gripper_distance(opening_mm)
+            if d < self.gripper_distance_tol:
+                rospy.loginfo("moved gripper to position error of: " + str(d))
+                break
+            r.sleep()
+
+    def measure_gripper_distance(self, opening_mm):
+        goal = [opening_mm/2000, opening_mm/2000]
+        target = self._joint_states_gripper
+        d = BaseProxy.measure_euclidean_distance(goal, target)
+        return d 
 
     def control_loop(self):
         if self.commands is None:

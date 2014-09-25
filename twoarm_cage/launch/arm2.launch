@@ -1,38 +1,36 @@
 <?xml version="1.0"?>
 
+<!--
+
+This launch file starts the ROS wrapper for the KUKA youBot API.
+
+
+If you receive an error message that contains "Excecute as root"
+then go to the bin folder and execute: sudo setcap cap_net_raw+ep
+or enable the USE_SETCAP flag in the cmake file and recompile again.
+-->
+
 <launch>
 
-	<!-- Set relevant parameters. -->
-	<param name="youBotHasBase" type="bool" value="false"/>
-	<param name="youBotHasArms" type="bool" value="true"/> 
-	<param name="youBotDriverCycleFrequencyInHz" type="double" value="50.0"/>
-	<param name="trajectoryActionServerEnable" type="bool" value="true"/>
-        <param name="trajectoryPositionGain" type="double" value="5.0"/>
-        <param name="trajectoryVelocityGain" type="double" value="0.0"/>
-        <param name="youBotConfigurationFilePath" type="string" value="$(find youbot_apps)/config"/>
+	<arg name="ybt" default="false"/>
 
-	<!-- 
-	  Initialize youBot arms by name. Each named arm must have a matching config
-	  file. For example, the entry:	 
-		  <param name="youBotArmName1" type="str" value="MyArm"/>
-	  will attempt to initialize an arm using the config file "MyArm.cfg" in your
-	  default configuration path.
+	<!-- call the youbot one arm driver launch file -->
+	<include file="$(find youbot_apps)/launch/youbot_one_arm.launch" />
 
-	  To initialize multiple arms, simply define parameters naming each of them,
-	  beginning with the parameter "youBotArmName1", then "youBotArmName2", etc.
-	-->
-	
-	<!-- Default name values --> 
-	<param name="youBotBaseName" type="str" value="youbot-base"/>
-	<param name="youBotArmName2" type="str" value="youbot-manipulator2"/>
-	
+	<!-- start the robot proxy for arm 1 -->
+	<node pkg="twoarm_cage" 
+			type="robot_proxy_exec.py" 
+			name="robot_proxy_2"
+			output="screen">
 
-	<!-- Start the driver. NOTE: Every joint topic is mapped to armName/joint_states -->
-	<node name="youbot_driver" pkg="youbot_driver_ros_interface" type="youbot_driver_ros_interface" output="screen">
-			<remap from="base/joint_states" to="joint_states"/> 
-			<remap from="arm_2/joint_states" to="joint_states" /> 
-			<!--<remap from="arm_2/joint_states" to="joint_states" />-->
-	</node>
+		<param name="arm_num" type="int" value="2" />
+		<param name="~joint_pose_dict" type="string" value="$(find youbot_apps)/config/joint_pos_defs.yaml"/>
+		<param name="~cmd_seq" type="string" value="$(find youbot_apps)/config/arm2_commands.yaml" />
+		<param name="~joint_states_topic" type="string" value="joint_states" />
+		<param name="~gripper_distance_tol" type="double" value="0.001" />
+		<param name="~joint_distance_tol" type="double" value="0.02" />
+
+	</node>  	
 		  
 </launch>
 

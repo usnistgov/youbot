@@ -86,10 +86,14 @@ class BaseProxy(object):
         if cmd.has_key(ProxyCommand.key_command_set_depend):        
             self.depends_status.transmit_update_depend(cmd[ProxyCommand.key_command_set_depend], True)
 
-    def measure_euclidean_distance(x, y):
+    @classmethod
+    def measure_euclidean_distance(cls, x, y):
         # todo: add threading event to lock the variable until operating completes
         #   use finaly to ensure lock is released
-        return numpy.sqrt(numpy.sum((x-y)**2))            
+        x = numpy.asfarray(x)
+        y = numpy.asfarray(y)        
+        d = numpy.sqrt(numpy.sum( (x-y)**2 ))
+        return d
             
     @property
     def frame_id(self): 
