@@ -198,21 +198,24 @@ def JointTrajectory_client(USE_BRICS=False,
     arm_client = actionlib.SimpleActionClient(arm_action_server_name, 
                     control_msgs.msg.FollowJointTrajectoryAction)
 
-    # create an arm brics_actuator publisher
-    arm_pub = rospy.Publisher("/arm_1/arm_controller/position_command", JointPositions, queue_size = 5)
-    rospy.loginfo("Created publisher for /arm_1/arm_controller/position_command")
-    arm_pub_dur = 3.0
-    
-    #gripper_client = actionlib.SimpleActionClient(gripper_action_server_name, 
-    #                                      control_msgs.msg.FollowJointTrajectoryAction)
-    #rospy.loginfo("Created gripper joint trajectory action client " + gripper_action_server_name)
+    if USE_BRICS == True:
+        # create an arm brics_actuator publisher
+        arm_pub = rospy.Publisher("/arm_1/arm_controller/position_command", JointPositions, queue_size = 5)
+        rospy.loginfo("Created publisher for /arm_1/arm_controller/position_command")
+        arm_pub_dur = 3.0
 
-    # Waits until the action server has started up and started
-    # listening for goals.
-    rospy.loginfo("waiting for arm action server")
-    arm_client.wait_for_server()  
-    #rospy.loginfo("waiting for gripper action server")
-    #gripper_client.wait_for_server()
+    else:
+    
+        #gripper_client = actionlib.SimpleActionClient(gripper_action_server_name, 
+        #                                      control_msgs.msg.FollowJointTrajectoryAction)
+        #rospy.loginfo("Created gripper joint trajectory action client " + gripper_action_server_name)
+
+        # Waits until the action server has started up and started
+        # listening for goals.
+        rospy.loginfo("waiting for arm action server")
+        arm_client.wait_for_server()  
+        #rospy.loginfo("waiting for gripper action server")
+        #gripper_client.wait_for_server()
 
     ## Getting Basic Information
     ## ^^^^^^^^^^^^^^^^^^^^^^^^^
