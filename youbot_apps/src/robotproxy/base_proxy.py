@@ -88,12 +88,27 @@ class BaseProxy(object):
 
     @classmethod
     def measure_euclidean_distance(cls, x, y):
+        '''
+        @notes: measures euclidean distance of all joints combined
+        '''
         # todo: add threading event to lock the variable until operating completes
         #   use finaly to ensure lock is released
         x = numpy.asfarray(x)
         y = numpy.asfarray(y)        
         d = numpy.sqrt(numpy.sum( (x-y)**2 ))
         return d
+
+    @classmethod
+    def measure_joint_distance_sum(cls, x, y):
+        '''
+        @notes: measures sum of all joint distances
+        '''
+        # todo: add threading event to lock the variable until operating completes
+        #   use finaly to ensure lock is released
+        x = numpy.asfarray(x)
+        y = numpy.asfarray(y)     
+        d = numpy.sum(numpy.abs(x-y))   
+        return d        
             
     @property
     def frame_id(self): 
