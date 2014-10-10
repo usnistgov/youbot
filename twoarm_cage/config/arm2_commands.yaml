@@ -1,0 +1,116 @@
+# Author: Rick Candell
+# Org: NIST
+# License: Public Domain
+# Configuration file format
+# Put a - between each entry 
+# Specify the following:
+#   name: name of action (optional)
+#   type: plan_exec_arm, move_arm, move_gripper, sleep, 'noop'
+#   spec:  for all move types, specify the name of the goal as joint positions
+#             for all plan types, specify the eef position as [x, y, z, r, p, y]
+#             for sleep, specify seconds as a float
+#   wait_depend: full name of dependency
+#   set_depend: name of dependency to update once action is complete
+
+-
+    type: noop
+    wait_depend: /system/begin
+- 
+    type: move_gripper
+    spec: opening 
+-
+    type: move_arm 
+    spec: cand
+-
+    type: move_arm 
+    spec: preload
+-
+    type: move_arm 
+    spec: load  
+-
+    type: move_gripper
+    spec: closing
+-
+    type: move_arm 
+    spec: preload 
+-
+    type: move_arm
+    spec: premach2
+-
+    type: move_arm
+    spec: mach2
+-
+    type: move_gripper
+    spec: opening
+-
+    type: move_arm
+    spec: premach2
+-
+    type: move_arm
+    spec: cand
+-
+    type: move_arm
+    spec: pretrans2
+-
+    wait_depend: /arm_1/ready_with_ball
+    type: move_arm
+    spec: trans2
+-
+    type: move_gripper
+    spec: closing
+    set_depend: /arm_2/got_ball    
+-
+    wait_depend: /arm_1/ball_released
+    type: move_arm
+    spec: posttrans2
+-
+    type: move_arm
+    spec: cand
+-
+    type: move_arm
+    spec: preload
+-
+    type: move_arm
+    spec: load
+-
+    type: move_gripper
+    spec: opening
+-
+    type: move_arm 
+    spec: preload
+-
+    type: move_arm 
+    spec: premach2
+-
+    type: move_arm 
+    spec: mach2
+-
+    type: move_gripper
+    spec: closing
+-
+    type: move_arm 
+    spec: premach2
+-
+    type: move_gripper
+    spec: opening
+-
+    type: move_arm
+    spec: prepick_rob2
+-
+    type: move_arm
+    spec: pick_rob2
+-
+    type: move_gripper
+    spec: opening
+#-
+    # This is just to wait for the ball to roll. Can be longer if necessary.
+    # Note: this will eventually be a proximity sensor
+    #type: sleep
+    #spec: 1.5 
+-
+    type: move_arm 
+    spec: prepick_rob2
+-
+    type: move_arm
+    spec: cand
+

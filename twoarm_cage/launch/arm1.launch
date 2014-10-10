@@ -15,7 +15,7 @@ or enable the USE_SETCAP flag in the cmake file and recompile again.
 	<arg name="ybt" default="false"/>
 
 	<!-- call the youbot one arm driver launch file -->
-	<include if="$(arg ybt)" file="$(find youbot_apps)/launch/youbot_one_arm.launch" />
+	<!-- <include if="$(arg ybt)" file="$(find twoarm_cage)/launch/arm1_driver.launch"/> -->
 
 	<!-- start the robot proxy for arm 1 -->
 	<node pkg="twoarm_cage" 
