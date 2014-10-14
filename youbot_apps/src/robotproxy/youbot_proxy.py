@@ -223,10 +223,10 @@ class YoubotProxy(BaseProxy):
                 v = float(spec)
                 rospy.sleep(v)
             elif t == 'move_gripper':
-                rospy.loginfo("gripper command")
+                rospy.logdebug("gripper command")
                 self.move_gripper(spec)
             elif t == 'move_arm':
-                rospy.loginfo("move_arm command")
+                rospy.logdebug("move_arm command")
                 rospy.logdebug(spec)
                 self.move_arm(spec)
             elif t == 'plan_exec_arm':
