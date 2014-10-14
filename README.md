@@ -10,19 +10,19 @@ This repository contains many different ROS packages required to run the youbot 
 # Package Contents
 
 - **youbot_description**
-This package contains all of the URDF and XACRO files that describe the build and kinematics of the robot.  Some minor changes have been made from the original debian source.
+This package contains all of the URDF and XACRO files that describe the build and kinematics of the robot.  Some minor changes have been made from the original debian release.
 
 - **youbot_moveit**
-This package was created using the MoveIt! Setup Assistant.  Most launch files and config files were created using this tool.  The contents of this package are described in the following sections.
+This package was created using the MoveIt! Setup Assistant.  
 
 - **youbot_msgs**
 This package contains custom message definitions used by the youbot applications.
 
 - **youbot_apps**
-This package contains scripts and launch files to run the robot.  This package also contains a core python package for controlling multiple youbots using modules inthe *robot_proxy* package. 
+This package contains scripts and launch files to run the robot under gazebo or with the hardware.  This package also contains a core python package for controlling multiple youbots using modules in the *robot_proxy* package. 
 
 - **twoarm_cage**
-This package contains all scripts, launch files, and configuration required to run a two arm collaborative demonstration platform in the NIST security lab.  Robots under this configuraiton are controlled using independent PC's with a remote rosmaster.  Three computers are typically required under this configuration although with minor modifications, and single computer with a two-arm driver configuration could be used.
+This package contains all scripts, launch files, and configuration required to run a two arm collaborative experimental platform in the NIST security lab.  Robots under this configuraiton are controlled using independent PC's with a remote ROS master.  Three computers are typically required under this configuration; although, with minor modifications, a single computer with a two-arm driver could be used.
 
 # Installation
 - Install Ubuntu 12.04 [http://releases.ubuntu.com/12.04/](http://releases.ubuntu.com/12.04/)
