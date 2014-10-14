@@ -1,11 +1,11 @@
-## two_arm_collab_demo
+## Two-Arm Collaborative Demo with Single Driver
 ================
 Author: Rick Candell <br>
 Contact: rick.candell@nist.gov <br>
 License: Public Domain
 
 ## Notes
-The two-arm collaborative demo is designed to execute on one machine with a single two-arm driver instance.
+The two-arm collaborative demo is designed to execute on one machine with a single two-arm driver instance and one application instance.
 
 To launch the demo, run:
 
