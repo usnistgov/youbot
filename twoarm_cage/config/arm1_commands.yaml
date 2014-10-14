@@ -13,14 +13,14 @@
 #   set_depend: name of dependency to update once action is complete
 
 -
-    type: 'noop'
-    wait_depend: /system/begin
--
     type: move_gripper
     spec: opening 
 -
     type: move_arm
     spec: cand
+-
+    type: 'noop'
+    wait_depend: /system/begin
 -
     type: move_arm
     spec: premach1
@@ -82,10 +82,11 @@
     type: move_arm
     spec: prepick_rob1
 -
+    wait_depend: /arm_2/ball_on_ramp
     # This is just to wait for the ball to roll. Can be longer if necessary.
     # Note: this will eventually be a proximity sensor
     type: sleep
-    spec: 1.5 
+    spec: 3.5 
 -
     type: move_arm
     spec: pick_rob1

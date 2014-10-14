@@ -39,8 +39,10 @@ class YoubotProxy(BaseProxy):
         
         # init object attributes
         self.arm_num = rospy.get_param("~arm_num")
-        self.gripper_move_duration = rospy.get_param("~gripper_move_duration",10)
-        self.arm_move_duration = rospy.get_param("~arm_move_duration",10)
+        self.gripper_move_duration = rospy.Duration(rospy.get_param("~gripper_move_duration",10.0))
+        rospy.loginfo("gripper move duration: " + str(self.gripper_move_duration))
+        self.arm_move_duration = rospy.Duration(rospy.get_param("~arm_move_duration",10.0))
+        rospy.loginfo("arm move duration: " + str(self.arm_move_duration))
 
         # init joint_states subscriber
         self._joint_states_arm = [0]*5
