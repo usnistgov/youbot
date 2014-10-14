@@ -27,8 +27,10 @@ or enable the USE_SETCAP flag in the cmake file and recompile again.
 		<param name="~joint_pose_dict" type="string" value="$(find youbot_apps)/config/joint_pos_defs.yaml"/>
 		<param name="~cmd_seq" type="string" value="$(find youbot_apps)/config/arm1_commands.yaml" />
 		<param name="~joint_states_topic" type="string" value="/arm_1/joint_states" />
-		<param name="~gripper_distance_tol" type="double" value="0.01" />
+		<param name="~gripper_distance_tol" type="double" value="0.001" />
 		<param name="~joint_distance_tol" type="double" value="0.009" />
+		<param name="~gripper_move_duration" type="double" value="3" />
+		<param name="~arm_move_duration" type="double" value="5" />
 
 	</node>  	
 		  
