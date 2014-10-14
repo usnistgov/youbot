@@ -39,6 +39,8 @@ class YoubotProxy(BaseProxy):
         
         # init object attributes
         self.arm_num = rospy.get_param("~arm_num")
+        self.gripper_move_duration = rospy.get_param("~gripper_move_duration",10)
+        self.arm_move_duration = rospy.get_param("~arm_move_duration",10)
 
         # init joint_states subscriber
         self._joint_states_arm = [0]*5
@@ -112,10 +114,15 @@ class YoubotProxy(BaseProxy):
         rospy.logdebug("brics message created")
         rospy.logdebug(jp)
         r = rospy.Rate(50)
+        t0 = rospy.Time().now()
         while not rospy.is_shutdown():
             d = BaseProxy.measure_joint_distance_sum(self._joint_states_arm, positions)
-            if d < self.arm_joint_distance_tol:
-                rospy.loginfo("moved arm to position error of: " + str(d))
+            if (d < self.arm_joint_distance_tol):
+                rospy.loginfo("moved arm to joint position error of: " + str(d))
+                break        
+            td = rospy.Time().now()
+            if (td-t0 > self.arm_move_duration):
+                rospy.loginfo("move arm timeout.  joint position error " + str(d))
                 break        
             self._arm_pub.publish(jp)
             r.sleep()
@@ -160,6 +167,7 @@ class YoubotProxy(BaseProxy):
         # gripper publisher
         r = rospy.Rate(30) 
         rospy.loginfo("moving gripper")
+        t0 = rospy.Time().now()
         while not rospy.is_shutdown():
             self._gripper_pub.publish(jp)
             d = self.measure_gripper_distance(opening_m)
@@ -167,6 +175,10 @@ class YoubotProxy(BaseProxy):
             if d < self.gripper_distance_tol:
                 rospy.loginfo("moved gripper to position error of: " + str(d))
                 break
+            td = rospy.Time().now()
+            if (td-t0 > self.gripper_move_duration):
+                rospy.loginfo("move gripper timeout.  gripper position error " + str(d))
+                break                
             r.sleep()
 
     def measure_gripper_distance(self, opening_m):
