@@ -96,6 +96,8 @@ roslaunch youbot_apps moveit.launch
 Then in yet another terminal
 
 ```
+rosrun youbot_apps selpose.py
+rosrun youbot_apps two_arm_collab_demo.py
 roslaunch youbot_apps circle_tap.launch
 ```
 
