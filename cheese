@@ -23,4 +23,5 @@ git fetch origin master:master
 * pull to the local machine
 git pull
 
+What about merging????
 
