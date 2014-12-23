@@ -20,6 +20,7 @@ For down stream changes.  Changes made elsewhere
 * refresh bare repo
 git fetch origin master:master
 
-
+* pull to the local machine
+git pull
 
 
