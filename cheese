@@ -5,7 +5,7 @@ Go to a folder of your choice on the bare repo machine
 1. On the interim remote (bare repo): git clone --bare git@github.com:usnistgov/youbot.git
 
 Go to a folder of your choice on the local machine
-2. On the client remote: git clone rcandell@eisner:github/youbot
+2. On the client remote: git clone rcandell@eisner:github/youbot.git
 
 make your changes on local machine
 
