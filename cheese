@@ -19,7 +19,7 @@ Pn the local machine
 For down stream changes.  Changes made elsewhere
 * refresh bare repo
 git fetch origin master:master
-or
-git fectch (if that works)
+
+
 
 
