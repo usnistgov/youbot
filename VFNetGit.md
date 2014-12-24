@@ -88,10 +88,10 @@ This will record the commits in the `collabdemo` branch on the uptream bare repo
 
 4. Now you need to go through the `eisner` intermediary to get the updates actually recorded on GitHub, to which only `eisner` can access. By default, the bare repository only tracks the branch it was originally set up to track, probably `master`, so to get the `collabdemo` branch pushed back up to GitHub, you'll need to explicitly specify this using `<localbranch>:<remotebranch>` syntax, On `eisner`, do this:
 ```
-# on eisner now
 cd <path/to/your/eisner/repos/youbot.git
 git push origin collabdemo:collabdemo
 ```
+You should see your changes on GitHub (make sure to select the `collabdemo` branch on the GitHub web page). 
 
 ## Go to a folder of your choice on the bare repo machine 1. On the
 interim remote (bare repo): git clone --bare
