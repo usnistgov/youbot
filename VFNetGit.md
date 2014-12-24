@@ -52,6 +52,21 @@ git clone eisner:<path/to/your/eisner/repos>/youbot.git
 ```
 This is a normal clone, without the `--bare` option.
 
+3. Still on `polaris`, check out the branch you will be using, or create a new one. To see the branches that are available (on the GitHub remote), do:
+
+`git branch -a`
+
+You will see something like this: 
+```
+* master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/master
+  remotes/origin/collabdemo
+```
+Let's say you want to work in the `collabdemo` branch. Check it out:
+
+`git checkout collabdemo`
+
 3. On `polaris`, edit your files as usual, and when done, do the usual `git add <new files>` and `git push`. This will record the commits on the uptream bare repository. These won't appear on GitHub yet. 
 4. On 'eisner', do a 'git push'
 
