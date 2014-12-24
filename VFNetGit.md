@@ -109,7 +109,7 @@ cd <path/to/your/eisner/repos>/youbot.git
 git fetch origin master:master
 git fetch origin collabdemo:collabdemo
 ```
-2. On 'polaris', pull as usual:
+2. On `polaris`, pull as usual:
 ```
 cd <path/to/your/polaris/repos>/youbot
 git pull
