@@ -116,4 +116,4 @@ git pull
 ```
 You can then checkout branches, make changes, and push (twice, from `polaris` and `eisner`) to get them back up to GitHub as explained earlier.
 
-_ This file uses Markdown (`.md`) format. See [help.github.com/articles/markdown-basics](http://help.github.com/articles/markdown-basics) for help with editing. _
+_This file uses Markdown (`.md`) format. See [help.github.com/articles/markdown-basics](http://help.github.com/articles/markdown-basics) for help with editing._
