@@ -50,9 +50,13 @@ Note the `--bare` option here.
 cd <path/to/your/polaris/repos>
 git clone eisner:<path/to/your/eisner/repos>/youbot.git
 ```
-This is a normal clone, without the `--bare` option.
+This is a normal clone, without the `--bare` option. Now you are set up to do development using Git, with a bare repository on an intermediate host (`eisner`) serving as a stepping stone to the Internet.
 
-3. Still on `polaris`, check out the branch you will be using, or create a new one. To see the branches that are available (on the GitHub remote), do:
+### Making changes locally, pushing them up to GitHub
+
+First we will make some changes to the code base locally, within the VFNet, and push them up to GitHub. 
+
+1. Still on `polaris`, check out the branch you will be using, or create a new one. To see the branches that are available (on the GitHub remote), do:
 
 `git branch -a`
 
@@ -67,7 +71,7 @@ Let's say you want to work in the `collabdemo` branch. Check it out:
 
 `git checkout collabdemo`
 
-3. Still on `polaris`, edit your files as usual, and when done, do the usual:
+2. Still on `polaris`, edit your files as usual, and when done, do the usual:
 ```
 git add <new files>
 git commit -a -m "<comments>"
@@ -86,32 +90,30 @@ To /home/you/github/youbot.git
 ```
 This will record the commits in the `collabdemo` branch on the uptream bare repository. These won't appear on GitHub yet. The `a4924e1..2a20390` shows that a commit was actually made, with a telltale checksum. Look for this whenever you do pushes or pulls to ensure that something was actually changed, if you expect it.
 
-4. Now you need to go through the `eisner` intermediary to get the updates actually recorded on GitHub, to which only `eisner` can access. By default, the bare repository only tracks the branch it was originally set up to track, probably `master`, so to get the `collabdemo` branch pushed back up to GitHub, you'll need to explicitly specify this using `<localbranch>:<remotebranch>` syntax, On `eisner`, do this:
+3. Now you need to go through the `eisner` intermediary to get the updates actually recorded on GitHub, to which only `eisner` can access. By default, the bare repository only tracks the branch it was originally set up to track, probably `master`, so to get the `collabdemo` branch pushed back up to GitHub, you'll need to explicitly specify this using `<localbranch>:<remotebranch>` syntax, On `eisner`, do this:
 ```
-cd <path/to/your/eisner/repos/youbot.git
+cd <path/to/your/eisner/repos>/youbot.git
 git push origin collabdemo:collabdemo
 ```
 You should see your changes on GitHub (make sure to select the `collabdemo` branch on the GitHub web page). 
 
 Once you push a branch explicitly, in this case with `collabdemo:collabdemo`, it won't be necessary to provide this again with `git push`. It will be recorded as a branch to be tracked. It can't hurt to provide the branch names each time, just to be sure. When in doubt, verify that a checksum is shown when pushing, fetching, or pulling.
 
-## Go to a folder of your choice on the bare repo machine 1. On the
-interim remote (bare repo): git clone --bare
-git@github.com:usnistgov/youbot.git
+### Pulling down updates from GitHub into the VFNet
 
-Go to a folder of your choice on the local machine 2. On the client
-remote: git clone rcandell@eisner:github/youbot
+Others will be making code changes and pushing them up to GitHub. To get these changes merged into your local branch on a VFNet machine, to the reverse process, updating the bare repo on `eisher` first, then pulling down changes into your local repository. 
 
-make your changes on local machine
-
-Pn the local machine * Add your changes using git add * Commit your
-changes * Push the changes: 3. git push
-
-
-For down stream changes.  Changes made elsewhere * refresh bare repo
+1. On `eisner`, fetch (don't pull) from GitHub, providing explicit branches the first time: 
+```
+cd <path/to/your/eisner/repos>/youbot.git
 git fetch origin master:master
+git fetch origin collabdemo:collabdemo
+```
+2. On 'polaris', pull as usual:
+```
+cd <path/to/your/polaris/repos>/youbot
+git pull
+```
+You can then checkout branches, make changes, and push (twice, from `polaris` and `eisner`) to get them back up to GitHub as explained earlier.
 
-* pull to the local machine git pull
-
-
-This file uses Markdown (`.md`) format. See [help.github.com/articles/markdown-basics](http://help.github.com/articles/markdown-basics)
+_ This file uses Markdown (`.md`) format. See [help.github.com/articles/markdown-basics](http://help.github.com/articles/markdown-basics) for help with editing. _
