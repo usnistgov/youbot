@@ -67,7 +67,8 @@ Let's say you want to work in the `collabdemo` branch. Check it out:
 
 `git checkout collabdemo`
 
-3. Still on `polaris`, edit your files as usual, and when done, do the usual `git add <new files>` and `git push`. This will record the commits on the uptream bare repository. These won't appear on GitHub yet. 
+3. Still on `polaris`, edit your files as usual, and when done, do the usual `git add <new files>` and `git push`. This will record the commits in the `collabdemo` branch on the uptream bare repository. These won't appear on GitHub yet. 
+
 4. On 'eisner', do a 'git push'
 
 ## Go to a folder of your choice on the bare repo machine 1. On the
