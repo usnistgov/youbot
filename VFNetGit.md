@@ -10,7 +10,7 @@ The purpose of the VFNet is to provide an isolated network for conducting resear
 
 To establish a simple terminal session, do:
 
-`ssh {<user>@}<host>`
+`ssh <user>@<host>`
 
 where `<user>` is your username on the remote `host`. If your username is omitted, your local username is used, but will result in an error if there is no account for you on the remote `host`. 
 
