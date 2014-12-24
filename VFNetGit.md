@@ -67,7 +67,25 @@ Let's say you want to work in the `collabdemo` branch. Check it out:
 
 `git checkout collabdemo`
 
-3. Still on `polaris`, edit your files as usual, and when done, do the usual `git add <new files>` and `git push`. This will record the commits in the `collabdemo` branch on the uptream bare repository. These won't appear on GitHub yet. 
+3. Still on `polaris`, edit your files as usual, and when done, do the usual:
+'''
+git add <new files>
+git commit -a -m "<comments>"
+git push
+```
+You will see something like this:
+```
+Counting objects: 5, done.
+Delta compression using up to 12 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 308 bytes, done.
+Total 3 (delta 2), reused 0 (delta 0)
+Unpacking objects: 100% (3/3), done.
+To /home/you/github/youbot.git
+   a4924e1..2a20390  collabdemo -> collabdemo
+```
+This will record the commits in the `collabdemo` branch on the uptream bare repository. These won't appear on GitHub yet. The `a4924e1..2a20390` shows that a commit was actually made, with a telltale checksum. Look for this whenever you do pushes or pulls to ensure that something was actually changed, if you expect it.
+
 
 4. On 'eisner', do a 'git push'
 
