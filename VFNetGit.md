@@ -93,6 +93,8 @@ git push origin collabdemo:collabdemo
 ```
 You should see your changes on GitHub (make sure to select the `collabdemo` branch on the GitHub web page). 
 
+Once you push a branch explicitly, in this case with `collabdemo:collabdemo`, it won't be necessary to provide this again with `git push`. It will be recorded as a branch to be tracked. It can't hurt to provide the branch names each time, just to be sure. When in doubt, verify that a checksum is shown when pushing, fetching, or pulling.
+
 ## Go to a folder of your choice on the bare repo machine 1. On the
 interim remote (bare repo): git clone --bare
 git@github.com:usnistgov/youbot.git
