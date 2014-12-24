@@ -68,7 +68,7 @@ Let's say you want to work in the `collabdemo` branch. Check it out:
 `git checkout collabdemo`
 
 3. Still on `polaris`, edit your files as usual, and when done, do the usual:
-'''
+```
 git add <new files>
 git commit -a -m "<comments>"
 git push
@@ -86,8 +86,12 @@ To /home/you/github/youbot.git
 ```
 This will record the commits in the `collabdemo` branch on the uptream bare repository. These won't appear on GitHub yet. The `a4924e1..2a20390` shows that a commit was actually made, with a telltale checksum. Look for this whenever you do pushes or pulls to ensure that something was actually changed, if you expect it.
 
-
-4. On 'eisner', do a 'git push'
+4. Now you need to go through the `eisner` intermediary to get the updates actually recorded on GitHub, to which only `eisner` can access. By default, the bare repository only tracks the branch it was originally set up to track, probably `master`, so to get the `collabdemo` branch pushed back up to GitHub, you'll need to explicitly specify this using `<localbranch>:<remotebranch>` syntax, On `eisner`, do this:
+```
+# on eisner now
+cd <path/to/your/eisner/repos/youbot.git
+git push origin collabdemo:collabdemo
+```
 
 ## Go to a folder of your choice on the bare repo machine 1. On the
 interim remote (bare repo): git clone --bare
