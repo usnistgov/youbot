@@ -1,0 +1,26 @@
+# Instructions for using Git on the VFNet
+
+Most of the machines on the Virtual Factory Network (VFNet) are not
+directly connected to the Internet, and cannot access Git repositories
+or use 
+
+## Go to a folder of your choice on the bare repo machine 1. On the
+interim remote (bare repo): git clone --bare
+git@github.com:usnistgov/youbot.git
+
+Go to a folder of your choice on the local machine 2. On the client
+remote: git clone rcandell@eisner:github/youbot
+
+make your changes on local machine
+
+Pn the local machine * Add your changes using git add * Commit your
+changes * Push the changes: 3. git push
+
+
+For down stream changes.  Changes made elsewhere * refresh bare repo
+git fetch origin master:master
+
+* pull to the local machine git pull
+
+
+This file uses Markdown (`.md`) format. See [help.github.com/articles/markdown-basics](http://help.github.com/articles/markdown-basics)
