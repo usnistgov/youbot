@@ -13,6 +13,9 @@
 #   set_depend: name of dependency to update once action is complete
 
 -
+    type: reset
+    spec: 0
+-
     type: move_gripper
     spec: opening 
 -
@@ -27,9 +30,13 @@
 -
     type: move_arm
     spec: mach1
--  
+-    
     type: move_gripper
     spec: closing
+-
+    # The robot needs time to manipulate the gripper
+    type: sleep
+    spec: 1.8
 -
     type: move_arm
     spec: premach1
@@ -47,8 +54,12 @@
     wait_depend: /arm_2/got_ball
     type: move_gripper
     spec: opening
-    set_depend: /arm_1/ball_released
 -
+    # The robot needs time to manipulate the gripper
+    type: sleep
+    spec: 1.8
+-
+    set_depend: /arm_1/ball_released
     type: move_arm
     spec: cand
 -
@@ -60,6 +71,11 @@
 -
     type: move_gripper
     spec: closing
+-
+    # The robot needs time to manipulate the gripper
+    type: sleep
+    spec: 1.8
+    set_depend: /arm_1/ball_released
 -
     type: move_arm
     spec: posttight_spot_pickA
@@ -75,6 +91,11 @@
 -
     type: move_gripper
     spec: opening
+-
+    # The robot needs time to manipulate the gripper
+    type: sleep
+    spec: 1.8
+    set_depend: /arm_1/ball_released
 -
     type: move_arm
     spec: cand
@@ -94,26 +115,35 @@
     type: move_gripper
     spec: closing
 -
+    # The robot needs time to manipulate the gripper
+    type: sleep
+    spec: 1.8
+-
     type: move_arm
     spec: ready_tight_spot
 -
     type: move_arm
     spec: pretight_spot_place
--
-    type: move_arm
-    spec: tight_spot
+#-
+#    type: move_arm
+#    spec: tight_spot
 -
     type: move_gripper
     spec: opening
 -
-    type: move_arm
-    spec: posttight_spot_place
+    # The robot needs time to manipulate the gripper
+    type: sleep
+    spec: 1.8
 -
+#    type: move_arm
+#    spec: posttight_spot_place
+#-
     type: move_arm
     spec: ready_tight_spot
 -
     type: move_arm
     spec: cand
+
     
     
     

@@ -12,6 +12,9 @@
 #   wait_depend: full name of dependency
 #   set_depend: name of dependency to update once action is complete
 
+-
+    type: reset
+    spec: 0
 - 
     type: move_gripper
     spec: opening 
@@ -31,6 +34,10 @@
     type: move_gripper
     spec: closing
 -
+    # The robot needs time to manipulate the gripper
+    type: sleep
+    spec: 1.8
+-
     type: move_arm 
     spec: preload 
 -
@@ -42,6 +49,10 @@
 -
     type: move_gripper
     spec: opening
+-
+    # The robot needs time to manipulate the gripper
+    type: sleep
+    spec: 1.8
 -
     type: move_arm
     spec: premach2
@@ -58,7 +69,11 @@
 -
     type: move_gripper
     spec: closing
-    set_depend: /arm_2/got_ball    
+-
+    # The robot needs time to manipulate the gripper
+    type: sleep
+    spec: 1.8
+    set_depend: /arm_2/got_ball
 -
     wait_depend: /arm_1/ball_released
     type: move_arm
@@ -76,6 +91,10 @@
     type: move_gripper
     spec: opening
 -
+    # The robot needs time to manipulate the gripper
+    type: sleep
+    spec: 1.8
+-
     type: move_arm 
     spec: preload
 -
@@ -87,6 +106,10 @@
 -
     type: move_gripper
     spec: closing
+-
+    # The robot needs time to manipulate the gripper
+    type: sleep
+    spec: 1.8
 -
     type: move_arm 
     spec: premach2
@@ -111,4 +134,3 @@
 -
     type: move_arm
     spec: cand
-

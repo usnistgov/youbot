@@ -14,9 +14,9 @@ if __name__=="__main__":
 
 	try:
 	    ygp = robotproxy.YoubotProxy('robot_proxy')
-	    path_to_posedict_yaml = rospy.get_param('~joint_pose_dict')
-	    path_to_cmds_yaml = rospy.get_param('~cmd_seq')
-	    ygp.load_control_plan(path_to_posedict_yaml, path_to_cmds_yaml)
+# 	    path_to_posedict_yaml = rospy.get_param('~joint_pose_dict',)
+# 	    path_to_cmds_yaml = rospy.get_param('~cmd_seq')
+# 	    ygp.load_control_plan(path_to_posedict_yaml, path_to_cmds_yaml)
 	    ygp.control_loop()
 	except Exception as e:
 		print e
