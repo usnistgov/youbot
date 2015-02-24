@@ -33,11 +33,12 @@ or enable the USE_SETCAP flag in the cmake file and recompile again.
 	-->
 	
 	<!-- Default name values --> 
-	<param name="youBotBaseName" type="str" value="youbot-base"/>
+	<!-- <param name="youBotBaseName" type="str" value="youbot-base"/> -->
 	<param name="youBotArmName1" type="str" value="youbot-manipulator1"/>
+	<param name="youBotArmName2" type="str" value="youbot-manipulator2"/>
 
 	<!-- Start the driver. NOTE: Every joint topic is mapped to armName/joint_states -->
-	<node name="youbot_driver_arm_1" pkg="youbot_driver_ros_interface" type="youbot_driver_ros_interface" output="screen">
+	<node name="youbot_driver_twoarm" pkg="youbot_driver_ros_interface" type="youbot_driver_ros_interface" output="screen">
 			<!-- <remap from="base/joint_states" to="joint_states"/> -->
 			<!-- <remap from="arm_1/joint_states" to="joint_states" /> -->
 			<!-- <remap from="arm_2/joint_states" to="joint_states" /> -->

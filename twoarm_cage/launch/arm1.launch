@@ -12,6 +12,8 @@ or enable the USE_SETCAP flag in the cmake file and recompile again.
 
 <launch>
 
+	<env name="ROS_MASTER_URI" value="http://polaris:11311"/>
+
 	<arg name="ybt" default="false"/>
 
 	<!-- call the youbot one arm driver launch file -->
@@ -27,10 +29,12 @@ or enable the USE_SETCAP flag in the cmake file and recompile again.
 		<param name="~joint_pose_dict" type="string" value="$(find twoarm_cage)/config/joint_pos_defs.yaml"/>
 		<param name="~cmd_seq" type="string" value="$(find twoarm_cage)/config/arm1_commands.yaml" />
 		<param name="~joint_states_topic" type="string" value="/arm_1/joint_states" />
-		<param name="~gripper_distance_tol" type="double" value="0.001" />
-		<param name="~joint_distance_tol" type="double" value="0.005" />
-		<param name="~gripper_move_duration" type="double" value="3" />
-		<param name="~arm_move_duration" type="double" value="5" />
+
+	    <param name="~joint_distance_tol" type="double" value="0.05" />
+	    <param name="~arm_move_duration" type="double" value="10.0" />
+
+	    <param name="~gripper_distance_tol" type="double" value="0.05" />
+	    <param name="~gripper_move_duration" type="double" value="10.0" />
 
 	</node>  	
 		  

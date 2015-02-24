@@ -29,6 +29,11 @@ class ProxyDepends(object):
         self._pub.publish(msg)
         rospy.loginfo("transmit dependency update " + name + " with " + str(value))
         
+        
+    def reset_database(self):
+        self._d = {}
+        rospy.loginfo("proxy-depends database reset for arm: " + str(self._arm_id))
+        
     def receive_update_depend_cb(self, data):
         '''
         @param data: An UpdateDependency object 
@@ -36,7 +41,7 @@ class ProxyDepends(object):
         self._d[data.name] = data.status
         rospy.loginfo("received dependency update " + data.name + " with " + str(data.status))
             
-    def wait_for_depend(self, name, timeout_secs=100):
+    def wait_for_depend(self, name, timeout_secs=6000):
         rospy.loginfo("waiting for dependency " + name + " with timeout " + str(timeout_secs))
         r = rospy.Rate(10)
         t0 = rospy.get_time()
