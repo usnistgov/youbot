@@ -29,7 +29,7 @@
     spec: premach1
 -
     type: move_arm
-    spec: mach1
+    spec: mach1 
 -    
     type: move_gripper
     spec: closing
@@ -49,7 +49,7 @@
 -
     type: move_arm
     spec: trans1
-    set_depend: /arm_1/ready_with_ball
+    set_depend: /arm_1/ready_with_ball    
 -
     wait_depend: /arm_2/got_ball
     type: move_gripper
@@ -59,12 +59,19 @@
     type: sleep
     spec: 1.8
 -
+    type: move_arm
+    spec: post_trans1    
+-
     set_depend: /arm_1/ball_released
     type: move_arm
     spec: cand
 -
     type: move_arm
     spec: ready_tight_spot
+-
+    # sleep time to allow PID to settle
+    type: sleep
+    spec: 2.0       
 -
     type: move_arm
     spec: tight_spot
@@ -74,14 +81,15 @@
 -
     # The robot needs time to manipulate the gripper
     type: sleep
-    spec: 1.8
+    spec: 2.0
     set_depend: /arm_1/ball_released
 -
     type: move_arm
-    spec: posttight_spot_pickA
--
-    type: move_arm
-    spec: posttight_spot_pickB
+    spec: ready_tight_spot
+    #spec: posttight_spot_pickA
+# -
+#     type: move_arm
+#     spec: posttight_spot_pickB
 -
     type: move_arm
     spec: premach1
@@ -94,7 +102,7 @@
 -
     # The robot needs time to manipulate the gripper
     type: sleep
-    spec: 1.8
+    spec: 3.0
     set_depend: /arm_1/ball_released
 -
     type: move_arm
@@ -107,7 +115,7 @@
     # This is just to wait for the ball to roll. Can be longer if necessary.
     # Note: this will eventually be a proximity sensor
     type: sleep
-    spec: 3.5 
+    spec: 5.0 
 -
     type: move_arm
     spec: pick_rob1
@@ -115,35 +123,27 @@
     type: move_gripper
     spec: closing
 -
-    # The robot needs time to manipulate the gripper
     type: sleep
-    spec: 1.8
+    spec: 1.0
 -
     type: move_arm
     spec: ready_tight_spot
 -
     type: move_arm
     spec: pretight_spot_place
-#-
-#    type: move_arm
-#    spec: tight_spot
+-
+    type: sleep
+    spec: 1.0    
+-
+   type: move_arm
+   spec: tight_spot
 -
     type: move_gripper
     spec: opening
 -
-    # The robot needs time to manipulate the gripper
-    type: sleep
-    spec: 1.8
--
-#    type: move_arm
-#    spec: posttight_spot_place
-#-
     type: move_arm
     spec: ready_tight_spot
 -
     type: move_arm
     spec: cand
 
-    
-    
-    

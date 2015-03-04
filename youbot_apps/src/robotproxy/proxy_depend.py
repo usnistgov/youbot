@@ -16,9 +16,9 @@ class ProxyDepends(object):
         self._d = {}
         rospy.loginfo("created " + self._arm_id)
         self._sub = rospy.Subscriber("robot_depends", UpdateDependency, self.receive_update_depend_cb)
-        rospy.loginfo("subscriber created")
+        rospy.logdebug("subscriber created")
         self._pub = rospy.Publisher("robot_depends", UpdateDependency, queue_size=10)
-        rospy.loginfo("publisher created")
+        rospy.logdebug("publisher created")
         
     def transmit_all_update_depend(self):
         for name in self._d.keys():
@@ -27,22 +27,22 @@ class ProxyDepends(object):
     def transmit_update_depend(self, name, value):
         msg = UpdateDependency(name, value)
         self._pub.publish(msg)
-        rospy.loginfo("transmit dependency update " + name + " with " + str(value))
+        rospy.logdebug("transmit dependency update " + name + " with " + str(value))
         
         
     def reset_database(self):
         self._d = {}
-        rospy.loginfo("proxy-depends database reset for arm: " + str(self._arm_id))
+        rospy.logdebug("proxy-depends database reset for arm: " + str(self._arm_id))
         
     def receive_update_depend_cb(self, data):
         '''
         @param data: An UpdateDependency object 
         '''
         self._d[data.name] = data.status
-        rospy.loginfo("received dependency update " + data.name + " with " + str(data.status))
+        rospy.logdebug("received dependency update " + data.name + " with " + str(data.status))
             
     def wait_for_depend(self, name, timeout_secs=6000):
-        rospy.loginfo("waiting for dependency " + name + " with timeout " + str(timeout_secs))
+        rospy.logdebug("waiting for dependency " + name + " with timeout " + str(timeout_secs))
         r = rospy.Rate(10)
         t0 = rospy.get_time()
         while not rospy.is_shutdown():
@@ -51,14 +51,14 @@ class ProxyDepends(object):
                 try:
                     if self._d.has_key(name):
                         if self._d[name] == True:
-                            rospy.loginfo("dependency "  +name + " satisfied")
+                            rospy.logdebug("dependency "  +name + " satisfied")
                             break
                         r.sleep()
                 except Exception as e:
-                    rospy.loginfo("dependency dictionary lookup error") 
+                    rospy.logdebug("dependency dictionary lookup error") 
                     raise e
             else:
-                rospy.loginfo("dependency timeout after "  + td + " seconds")
+                rospy.logdebug("dependency timeout after "  + td + " seconds")
                 raise Exception("system timeout", "dependency timeout after "  + td + " seconds")
             #self.transmit_all_update_depend() 
 

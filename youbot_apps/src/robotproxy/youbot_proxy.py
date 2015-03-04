@@ -137,7 +137,7 @@ class YoubotProxy(BaseProxy):
             rospy.logdebug("arm joint positions")
             rospy.logdebug(curr_jpos)
             if (d < self.arm_joint_distance_tol):
-                rospy.loginfo("moved arm to joint position error of: " + str(d))
+                rospy.logdebug("moved arm to joint position error of: " + str(d))
                 break        
             td = rospy.Time().now()
             if (td-t0 > self.arm_move_duration):
@@ -195,20 +195,20 @@ class YoubotProxy(BaseProxy):
 
         # gripper publisher
         r = rospy.Rate(30) 
-        rospy.loginfo("moving gripper")
+        rospy.logdebug("moving gripper")
         t0 = rospy.Time().now()
         while not rospy.is_shutdown():
             self._gripper_pub.publish(jp)
             d = self.measure_gripper_distance(opening_m)
 #             rospy.logdebug("gripper joint positions")
 #             rospy.logdebug(self._joint_positions_gripper)            
-            #rospy.loginfo("moved gripper to position error of: " + str(d))
+            #rospy.logdebug("moved gripper to position error of: " + str(d))
             if d < self.gripper_distance_tol:
-                rospy.loginfo("moved gripper to position error of: " + str(d))
+                rospy.logdebug("moved gripper to position error of: " + str(d))
                 break
             td = rospy.Time().now()
             if (td-t0 > self.gripper_move_duration):
-                rospy.loginfo("move gripper timeout.  gripper position error " + str(d))
+                rospy.logdebug("move gripper timeout.  gripper position error " + str(d))
                 break                
             r.sleep()
 
@@ -243,7 +243,7 @@ class YoubotProxy(BaseProxy):
                     spec = float(cmd_spec_str)
                 else:
                     spec = self.positions[cmd_spec_str]
-                rospy.loginfo("Command type: " + t + ", spec: " + str(cmd_spec_str) + ", value: " + str(spec))
+                rospy.loginfo("Command type: " + t.ljust(20) + "spec: " + str(cmd_spec_str).ljust(26) + "value: " + str(spec))
                        
             # check for any wait depends
             self.wait_for_depend(cmd)
@@ -251,10 +251,10 @@ class YoubotProxy(BaseProxy):
             # execute command
             # could do this with a dictionary-based function lookup, but who cares
             if t == 'noop':
-                rospy.loginfo("Command type: noop")
+                rospy.logdebug("Command type: noop")
                 self.wait_for_depend(cmd)
             elif t == 'sleep':
-                rospy.loginfo("sleep command")
+                rospy.logdebug("sleep command")
                 v = float(spec)
                 rospy.sleep(v)
             elif t == 'move_gripper':
@@ -265,11 +265,14 @@ class YoubotProxy(BaseProxy):
                 rospy.logdebug(spec)
                 self.move_arm(spec)
             elif t == 'plan_exec_arm':
-                rospy.loginfo("plan and execute command not implemented")
+                rospy.logdebug("plan and execute command not implemented")
                 raise NotImplementedError()
             elif t == 'reset':
-                rospy.loginfo("reset dependency database")
+                rospy.logdebug("reset dependency database")
                 self.reset_depend_status()
+            elif t == 'exit':
+                rospy.logdebug("Command set complete.  Exiting.")
+                break
             else:
                 raise Exception("Invalid command type: " + str(cmd.type))
 
