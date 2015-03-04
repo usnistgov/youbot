@@ -47,6 +47,10 @@ class BaseProxy(object):
         # this will be a dictionary of Thread Event objects
         self.locks = {}
         
+    def reset_depend_status(self):
+        rospy.loginfo("call to reset dependency database in base_proxy")
+        self.depends_status.reset_database()
+        
     def wait_for_state(self, state):
         while True: 
             if self.proxy_state == state: break

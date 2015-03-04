@@ -13,23 +13,14 @@
 #   set_depend: name of dependency to update once action is complete
 
 -
-    type: reset
-    spec: 0
+    type: 'noop'
+#    wait_depend: /system/begin
+-
+    type: sleep
+    spec: 1
 -
     type: move_gripper
     spec: opening 
 -
     type: move_arm
-    spec: cand
--
-    type: 'noop'
-    wait_depend: /system/begin
--
-    type: move_arm
-    spec: premach1
--
-    type: move_arm
-    spec: mach1
--
-    type: exit
-    spec: 0
+    spec: trans2
