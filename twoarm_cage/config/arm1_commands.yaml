@@ -16,14 +16,15 @@
     type: reset
     spec: 0
 -
+    type: move_arm
+    spec: cand   
+    set_depend: /arm_1/ready_to_begin 
+-
     type: move_gripper
     spec: opening 
 -
-    type: move_arm
-    spec: cand
--
-    type: 'noop'
-    wait_depend: /system/begin
+    type: noop
+    wait_depend: /arm_2/ready_to_begin
 -
     type: move_arm
     spec: premach1
@@ -86,10 +87,6 @@
 -
     type: move_arm
     spec: ready_tight_spot
-    #spec: posttight_spot_pickA
-# -
-#     type: move_arm
-#     spec: posttight_spot_pickB
 -
     type: move_arm
     spec: premach1
@@ -127,19 +124,22 @@
     spec: 1.0
 -
     type: move_arm
-    spec: ready_tight_spot
+    spec: prepick_rob1    
 -
     type: move_arm
-    spec: pretight_spot_place
+    spec: ready_tight_spot
 -
     type: sleep
-    spec: 1.0    
+    spec: 2.0    
 -
    type: move_arm
    spec: tight_spot
 -
     type: move_gripper
     spec: opening
+-
+    type: sleep
+    spec: 2.0    
 -
     type: move_arm
     spec: ready_tight_spot

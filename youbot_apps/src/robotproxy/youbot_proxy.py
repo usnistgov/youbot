@@ -18,6 +18,7 @@ from brics_actuator.msg import JointPositions, JointValue
 from sensor_msgs.msg import JointState
 import numpy
 import itertools
+import json
 
 class YoubotProxy(BaseProxy):
     
@@ -29,6 +30,7 @@ class YoubotProxy(BaseProxy):
     #TODO delete: end_effector_link = "gripper_pointer_link"    
     
     def __init__(self, node_name):
+        
         rospy.logdebug("YoubotProxy __init__")
         super(YoubotProxy,self).__init__()
         self.init_done = False  # indicates that the object was initialized 
@@ -87,6 +89,9 @@ class YoubotProxy(BaseProxy):
                 
     def joint_states_cb(self, data):
         try:
+            # log receipt of joint states
+            #rospy.loginfo(data)
+
             # todo: wait for lock release
             self._joint_positions_arm = [ data.position[i] for i in self.arm_joint_indexes ]
             self._joint_positions_gripper = [ data.position[i] for i in self.gripper_joint_indexes ]
@@ -137,7 +142,7 @@ class YoubotProxy(BaseProxy):
             rospy.logdebug("arm joint positions")
             rospy.logdebug(curr_jpos)
             if (d < self.arm_joint_distance_tol):
-                rospy.logdebug("moved arm to joint position error of: " + str(d))
+                # rospy.logdebug("moved arm to joint position error of: " + str(d))
                 break        
             td = rospy.Time().now()
             if (td-t0 > self.arm_move_duration):
@@ -200,9 +205,9 @@ class YoubotProxy(BaseProxy):
         while not rospy.is_shutdown():
             self._gripper_pub.publish(jp)
             d = self.measure_gripper_distance(opening_m)
-#             rospy.logdebug("gripper joint positions")
-#             rospy.logdebug(self._joint_positions_gripper)            
-            #rospy.logdebug("moved gripper to position error of: " + str(d))
+            # rospy.logdebug("gripper joint positions")
+            # rospy.logdebug(self._joint_positions_gripper)            
+            # rospy.logdebug("moved gripper to position error of: " + str(d))
             if d < self.gripper_distance_tol:
                 rospy.logdebug("moved gripper to position error of: " + str(d))
                 break
@@ -220,7 +225,13 @@ class YoubotProxy(BaseProxy):
     def control_loop(self):
         if self.commands is None:
             raise Exception('Command list is empty.  Was the control plan loaded?')
+
+        # wait for the system/begin command
+        self.wait_for_system_begin()
         
+        # get current time
+        t0 = td = rospy.Time().now().to_sec()
+
         # loop through the command list
         # for cmd in self.commands:
         for cmd in itertools.cycle(self.commands):
@@ -270,6 +281,7 @@ class YoubotProxy(BaseProxy):
             elif t == 'reset':
                 rospy.logdebug("reset dependency database")
                 self.reset_depend_status()
+                t0 = td = rospy.Time().now().to_sec()
             elif t == 'exit':
                 rospy.logdebug("Command set complete.  Exiting.")
                 break
@@ -282,6 +294,11 @@ class YoubotProxy(BaseProxy):
             # check for any clear dependencies action
             self.clear_depend(cmd)
 
+            # log elapsed time
+            # check if it is time to stop
+            tk = rospy.Time().now().to_sec()
+            td = tk - t0
+            rospy.loginfo('total elapsed loop time: ' + str(td))
 
 
 

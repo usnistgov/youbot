@@ -1,2 +1,4 @@
 
 export ROS_MASTER_URI=http://polaris:11311
+
+export ROS_LOG_DIR=/home/youbot/testing/logs

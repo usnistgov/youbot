@@ -19,8 +19,14 @@ or enable the USE_SETCAP flag in the cmake file and recompile again.
 	<!-- call the youbot one arm driver launch file -->
 	<!-- <include if="$(arg ybt)" file="$(find twoarm_cage)/launch/arm2_driver.launch"/> -->
 
+	<!-- START THE NETWORK CAPTURE -->
+	<node pkg="twoarm_cage" required="false" type="pcap_logger.sh" name="pcap_logger">
+		<!-- NO PARAMS -->
+	</node>
+	
 	<!-- start the robot proxy for arm 1 -->
-	<node pkg="twoarm_cage" 
+	<node pkg="twoarm_cage"
+	 		required="true"
 			type="robot_proxy_exec.py" 
 			name="robot_proxy_2"
 			output="screen">

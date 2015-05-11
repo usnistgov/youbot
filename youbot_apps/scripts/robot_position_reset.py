@@ -260,6 +260,8 @@ def youbot_exec(arm_1_topic_name, arm_1_msg_type, grip_1_topic_name, grip_1_msg_
   prepick_rob2 = [2.945,1.5,-1.62,3.13,2.94]  
   pick_rob2 = [2.945,1.89,-1.62,3.13,4.5]  
   cand = [2.94,1.0,-2.1,1.8,2.94] # candle
+  cand1 = [2.94,1.0,-2.1,1.8,2.0] # candle
+  cand2 = [2.94,1.0,-2.1,1.8,4.0] # candle
   trans1 = [1.4,0.71,-2.0,3.3,2.9489] # Rob1 prepares for giving it to Rob2
   pretrans2 = [4.0,1.35,-1.94,2.4,1.39] # Rob2 gets ready to receive the ball
   trans2 = [4.5,1.35,-1.94,2.41,1.39] # Rob2 takes ball from Rob1 
@@ -300,9 +302,14 @@ def youbot_exec(arm_1_topic_name, arm_1_msg_type, grip_1_topic_name, grip_1_msg_
   while not rospy.is_shutdown(): 
       # Test setup. Starts with Candle, so make sure nothing is in the way of it getting to candle at startup
       # because it can be quite violent.
-      move_arms(cand,cand)
-      print "Exiting..."
-      break
+      #move_arms(cand,cand)
+      move_arms(cand1,cand)
+      rospy.sleep(5.0)
+      move_arms(cand2,cand)
+      rospy.sleep(5.0)
+      continue
+      #print "Exiting..."
+      #break
 
 # This is the main subroutine
 

@@ -20,6 +20,8 @@ class ProxyCommand():
     key_command_wait_depend = "wait_depend"
     key_command_set_depend = "set_depend"
 
+    SYS_BEGIN = "/system/begin"
+
 class BaseProxy(object):
     
     __metaclass__ = ABCMeta
@@ -46,7 +48,7 @@ class BaseProxy(object):
 
         # this will be a dictionary of Thread Event objects
         self.locks = {}
-        
+
     def reset_depend_status(self):
         rospy.loginfo("call to reset dependency database in base_proxy")
         self.depends_status.reset_database()
@@ -64,6 +66,9 @@ class BaseProxy(object):
     
     def sleep(self, rate_obj, fsecs):
         rospy.sleep(fsecs)
+
+    def wait_for_system_begin(self):
+        self.depends_status.wait_for_depend(ProxyCommand.SYS_BEGIN)
         
     def wait_for_depend(self, cmd):
         '''
