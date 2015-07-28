@@ -1,30 +1,62 @@
 joint_configurations:
-prepick_rob2: [2.945,1.5,-1.62,3.13,2.94]
-pick_rob2: [2.945,1.89,-1.62,3.13,4.5]
+# prepick_rob2: [2.945,1.5,-1.62,3.13,2.94]
+# pick_rob2: [2.945,1.89,-1.62,3.13,4.5]
+# cand: [2.94,1.0,-2.1,1.8,2.94] # candle
+# trans1: [1.4,0.71,-2.0,3.3,2.9489]  # Rob1 prepares for giving it to Rob2
+# post_trans1: [1.4,0.71,-2.0,2.5,2.9489]  # Rob1 prepares for giving it to Rob2
+# pretrans2: [4.0,1.35,-1.94,2.4,1.39]  # Rob2 gets ready to receive the ball
+# trans2: [4.5,1.35,-1.94,2.41,1.39]  # Rob2 takes ball from Rob1 
+# posttrans2: [4.5,0.9,-1.94,2.4,1.39]  # Rob2 moves out the way
+# premach2: [1.93, 0.55, -1.3, 2.5, 2.95]  # Machine 2 pre spot, it is right after loading point Rob2 uses it
+# mach2: [1.93, 1.05, -1.3, 3.16, 2.95]  # Machine 2 spot, it is right after loading point. Rob2 uses it
+# preload: [1.37, 1.15, -1.7, 2.83, 2.95]  # Loading pre point. Rob 2 uses it
+# load: [1.37, 1.55, -1.7, 2.83, 2.95]  # Loading point. Rob 2 uses it
+# dropoffdwell: [2.86, 1.64, -1.84, 3.42, 2.80]
+# dropoff: [2.86, 1.81, -1.81, 3.34, 2.82]
+# premach1: [2.22, 0.35, -2.34, 0.9, 2.95]  # Machine 1 pre spot. Rob1 uses it
+# mach1: [2.22, 0.05, -2.34, 0.89, 2.95]    # Machine 1 spot. Rob1 uses it
+# prepick_rob1: [2.96, 1.36, -1.62, 3.07, 1.37] # Robot 1 is the left hand one. This is the pre pickup spot 
+# pick_rob1:              [2.96, 1.96, -1.62, 3.07, 1.37]          # Robot 1 is the left hand one. This is the pickup spot 
+# ready_tight_spot:       [3.8, 1.35, -0.7, 0.85, 2.93]       # PRE-PRE tight spot, gets ready for *ANY* operation involving the tight spot.
+# pretight_spot_place:    [3.8, 1.75, -0.7, 0.85, 2.93]    # Pre tight spot for placing. Note identical to post-tight-spot-place.
+# tight_spot:             [3.8, 1.85, -0.9, 1.0, 2.93] # tight spot
+# posttight_spot_pickA:   [3.8, 1.85, -0.9, 0.90, 2.93]    # First post tight spot after picking (lifts it a bit)
+# posttight_spot_pickB:   [4.5, 1.85, -0.9, 0.90, 2.93]    # Second post tight spot after picking (clears the spot)
+# posttight_spot_place:   [3.8, 1.75, -0.7, 0.85, 2.93]    # Post tight spot for placing. Note identical to pre-tight-spot-place
+# opening: 22      # opening gap in mm
+# closing: 7      # closing gap in mm. DO NOT REDUCE BELOW 8 mm! Gripper finger(s) may become out of place from biting too hard.
+# SPECIAL: [3.8, 1.75, -0.7, 0.85, 2.929]  # USE FOR TESTING
+# wait_for_ball: 1.2
+
 cand: [2.94,1.0,-2.1,1.8,2.94] # candle
-trans1: [1.4,0.71,-2.0,3.3,2.9489]  # Rob1 prepares for giving it to Rob2
-post_trans1: [1.4,0.71,-2.0,2.5,2.9489]  # Rob1 prepares for giving it to Rob2
-pretrans2: [4.0,1.35,-1.94,2.4,1.39]  # Rob2 gets ready to receive the ball
-trans2: [4.5,1.35,-1.94,2.41,1.39]  # Rob2 takes ball from Rob1 
-posttrans2: [4.5,0.9,-1.94,2.4,1.39]  # Rob2 moves out the way
-premach2: [1.93, 0.55, -1.3, 2.5, 2.95]  # Machine 2 pre spot, it is right after loading point Rob2 uses it
-mach2: [1.93, 1.05, -1.3, 3.16, 2.95]  # Machine 2 spot, it is right after loading point. Rob2 uses it
-preload: [1.37, 1.15, -1.7, 2.83, 2.95]  # Loading pre point. Rob 2 uses it
-load: [1.37, 1.55, -1.7, 2.83, 2.95]  # Loading point. Rob 2 uses it
-dropoffdwell: [2.86, 1.64, -1.84, 3.42, 2.80]
-dropoff: [2.86, 1.81, -1.81, 3.34, 2.82]
-premach1: [2.22, 0.35, -2.34, 0.9, 2.95]  # Machine 1 pre spot. Rob1 uses it
-mach1: [2.22, 0.05, -2.34, 0.89, 2.95]    # Machine 1 spot. Rob1 uses it
-prepick_rob1: [2.96, 1.36, -1.62, 3.07, 1.37] # Robot 1 is the left hand one. This is the pre pickup spot 
-pick_rob1:              [2.96, 1.96, -1.62, 3.07, 1.37]          # Robot 1 is the left hand one. This is the pickup spot 
-ready_tight_spot:       [3.8, 1.35, -0.7, 0.85, 2.93]       # PRE-PRE tight spot, gets ready for *ANY* operation involving the tight spot.
-pretight_spot_place:    [3.8, 1.75, -0.7, 0.85, 2.93]    # Pre tight spot for placing. Note identical to post-tight-spot-place.
-tight_spot:             [3.8, 1.85, -0.9, 1.0, 2.93] # tight spot
-posttight_spot_pickA:   [3.8, 1.85, -0.9, 0.90, 2.93]    # First post tight spot after picking (lifts it a bit)
-posttight_spot_pickB:   [4.5, 1.85, -0.9, 0.90, 2.93]    # Second post tight spot after picking (clears the spot)
-posttight_spot_place:   [3.8, 1.75, -0.7, 0.85, 2.93]    # Post tight spot for placing. Note identical to pre-tight-spot-place
+
+rob1_station_1_pick: [3.79, 1.12, -0.78, 1.58, 2.95]
+rob1_station_1_dwell: [3.79, 1.12, -0.78, 1.38, 2.95]
+
+rob1_station_2_pick: [5.30, 1.23, -0.83, 1.48, 2.95]
+rob1_station_2_dwell: [5.30, 1.23, -0.83, 1.28, 2.95]
+
+rob2_station_3_pick: [1.05, 0.76, -0.53, 1.73, 2.92]
+rob2_station_3_dwell: [1.05, 0.76, -0.53, 1.53, 2.92]
+
+rob2_station_4_pick: [1.71, 0.78, -0.54, 1.72, 2.99]
+rob2_station_4_dwell: [1.71, 0.78, -0.54, 1.52, 2.99]
+
+rob2_station_5_drop: [3.00, 1.89, -1.87, 3.37, 4.63]
+rob2_station_5_dwell: [3.00, 1.69, -1.87, 3.37, 4.63]
+
+rob1_station_6_pick: [2.91, 2.11, -1.92, 3.33, 1.32]
+rob1_station_6_lift: [2.91, 1.91, -1.92, 3.33, 1.32]
+rob1_station_6_dwell: [3.11, 2.11, -1.92, 3.33, 1.32]
+rob1_station_6_safe: [2.91, 0.29, -1.23, 2.85, 2.91]
+
+rob1_station_7_place: [1.35, 0.59, -1.03, 2.39, 2.96]
+rob1_station_7_lift: [1.35, 0.59, -1.03, 2.00, 2.96]
+
+rob2_station_8_pick: [1.39, 1.10, -3.61, 1.32, 1.37]
+rob2_station_8_dwell: [1.19, 1.10, -3.61, 1.32, 1.37]
+
 opening: 22      # opening gap in mm
-closing: 7      # closing gap in mm. DO NOT REDUCE BELOW 8 mm! Gripper finger(s) may become out of place from biting too hard.
-SPECIAL: [3.8, 1.75, -0.7, 0.85, 2.929]  # USE FOR TESTING
+closing: 1       # closing gap in mm
 wait_for_ball: 1.2
 

@@ -13,106 +13,177 @@
 #   set_depend: name of dependency to update once action is complete
 
 -
-    type: 'noop'
-    wait_depend: /system/begin
--
-    type: move_gripper
-    spec: opening 
+    type: reset
+    spec: 0
 -
     type: move_arm
-    spec: cand
--
-    type: move_arm
-    spec: premach1
--
-    type: move_arm
-    spec: mach1
--  
-    type: move_gripper
-    spec: closing
--
-    type: move_arm
-    spec: premach1
-- 
-    type: move_arm
-    spec: cand
--
-    type: move_arm
-    spec: cand
--
-    type: move_arm
-    spec: trans1
-    set_depend: /arm_1/ready_with_ball
--
-    wait_depend: /arm_2/got_ball
-    type: move_gripper
-    spec: opening
-    set_depend: /arm_1/ball_released
--
-    type: move_arm
-    spec: cand
--
-    type: move_arm
-    spec: ready_tight_spot
--
-    type: move_arm
-    spec: tight_spot
--
-    type: move_gripper
-    spec: closing
--
-    type: move_arm
-    spec: posttight_spot_pickA
--
-    type: move_arm
-    spec: posttight_spot_pickB
--
-    type: move_arm
-    spec: premach1
--
-    type: move_arm
-    spec: mach1
+    spec: cand   
+    set_depend: /arm_1/ready_to_begin 
 -
     type: move_gripper
     spec: opening
 -
-    type: move_arm
-    spec: cand
--
-    type: move_arm
-    spec: prepick_rob1
--
-    # This is just to wait for the ball to roll. Can be longer if necessary.
-    # Note: this will eventually be a proximity sensor
     type: sleep
-    spec: 1.5 
+    spec: 2.0
 -
     type: move_arm
-    spec: pick_rob1
+    spec: rob1_station_6_dwell
+-
+    type: sleep
+    spec: 0.5
+-
+    type: move_arm
+    spec: rob1_station_6_pick
 -
     type: move_gripper
     spec: closing
 -
-    type: move_arm
-    spec: ready_tight_spot
+    type: sleep
+    spec: 2.0
 -
     type: move_arm
-    spec: pretight_spot_place
+    spec: rob1_station_6_lift
+-
+    type: sleep
+    spec: 0.5
 -
     type: move_arm
-    spec: tight_spot
+    spec: rob1_station_6_safe
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_arm
+    spec: rob1_station_1_dwell
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_arm
+    spec: rob1_station_1_pick
 -
     type: move_gripper
     spec: opening
 -
-    type: move_arm
-    spec: posttight_spot_place
+    type: sleep
+    spec: 2.0
 -
     type: move_arm
-    spec: ready_tight_spot
+    spec: rob1_station_1_dwell
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_arm
+    spec: cand   
+-
+    type: move_arm
+    spec: rob1_station_1_dwell
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_arm
+    spec: rob1_station_1_pick
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_gripper
+    spec: closing
+-
+    type: sleep
+    spec: 2.0
+-
+    type: move_arm
+    spec: rob1_station_1_dwell
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_arm
+    spec: rob1_station_2_dwell
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_arm
+    spec: rob1_station_2_pick
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_gripper
+    spec: opening
+-
+    type: sleep
+    spec: 2.0
+-
+    type: move_arm
+    spec: rob1_station_2_dwell
+-
+    type: sleep
+    spec: 1.0
 -
     type: move_arm
     spec: cand
-    
-    
-    
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_arm
+    spec: rob1_station_2_dwell
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_arm
+    spec: rob1_station_2_pick
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_gripper
+    spec: closing
+-
+    type: sleep
+    spec: 2.0
+-
+    type: move_arm
+    spec: rob1_station_2_dwell
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_arm
+    spec: rob1_station_6_safe
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_arm
+    spec: rob1_station_6_lift
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_arm
+    spec: rob1_station_6_pick
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_gripper
+    spec: opening
+-
+    type: sleep
+    spec: 2.0
+-
+    type: move_arm
+    spec: rob1_station_6_dwell
+-
+    type: sleep
+    spec: 1.0
+-
+    type: move_arm
+    spec: cand

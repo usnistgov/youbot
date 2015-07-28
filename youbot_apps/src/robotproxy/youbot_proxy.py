@@ -42,7 +42,7 @@ class YoubotProxy(BaseProxy):
         rospy.loginfo("node uri is : " + rospy.get_node_uri())
         
         # init object attributes
-        self.arm_num = rospy.get_param("~arm_num",2)
+        self.arm_num = rospy.get_param("~arm_num",1)
         rospy.loginfo("arm number: " + str(self.arm_num))
         self.gripper_move_duration = rospy.Duration(rospy.get_param("~gripper_move_duration",600.0))
         rospy.loginfo("gripper move duration: " + str(self.gripper_move_duration))
