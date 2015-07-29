@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package>
+  <name>youbot_modbus_server</name>
+  <version>0.0.1</version>
+  <description>The youbot_modbus_server package</description>
+  <license>Public Domain</license>
+  <maintainer email="timothy.zimmerman@nist.gov">Timothy Zimmerman</maintainer>
+  <author email="timothy.zimmerman@nist.gov">Timothy Zimmerman</author>
+  <url type="website">http://github.com/usnistgov/youbot_modbus_server</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>message_runtime</run_depend>
+
+  <export>
+  </export>
+</package>

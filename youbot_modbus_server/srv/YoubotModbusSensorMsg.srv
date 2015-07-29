@@ -1,0 +1,26 @@
+#
+# Author: Tim Zimmerman (timothy.zimmerman@nist.gov)
+# Organization: National Institute of Standards and Technology
+# U.S. Department of Commerce
+# License: Public Domain
+#
+# This service file describes the structure of the message for requesting 
+# enclave station status from the YoubotModbusServer node. The PLC tracks
+# the status of each station, and has three possible values:
+#   0 - No part present
+#   1 - Part present; Part is being processed
+#   2 - Part present; Part is ready for pickup
+#
+# The header contains the frame_id string to allow easy dissection of the
+# packets in the PCAP files. This is either 'youbot_modbus_station_request'
+# or 'youbot_modbus_station_response'
+
+Header header
+---
+Header header
+int8 station_1_status
+int8 station_2_status
+int8 station_3_status
+int8 station_4_status
+int8 station_5_status
+int8 station_6_status

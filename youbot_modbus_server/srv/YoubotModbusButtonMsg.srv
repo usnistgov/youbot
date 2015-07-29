@@ -1,0 +1,28 @@
+#
+# Author: Tim Zimmerman (timothy.zimmerman@nist.gov)
+# Organization: National Institute of Standards and Technology
+# U.S. Department of Commerce
+# License: Public Domain
+#
+# This service file describes the structure of the message for requesting 
+# enclave button status from the YoubotModbusServer node. The PLC monitors
+# all buttons and controls their indicators. Button and indicator values are: 
+#   0 - Button is NOT PRESSED / Indicator is OFF
+#   1 - Button is PRESSED / Indicator is ON
+#   2 - N/A / Indicator is FLASHING
+#
+# The header contains the frame_id string to allow easy dissection of the
+# packets in the PCAP files. This is either 'youbot_modbus_button_request'
+# or 'youbot_modbus_button_response'
+
+Header header
+---
+Header header
+int8 estop_button_status
+int8 estop_indicator_status
+int8 yellow_button_status
+int8 yellow_indicator_status
+int8 green_button_status
+int8 green_indicator_status
+int8 runstop_switch_status
+int8 runstop_indicator_status
