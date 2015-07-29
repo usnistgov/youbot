@@ -99,9 +99,9 @@ def youbot_modbus_server_server():
     # Main loop for polling the Modbus Server on the PLC - plc_polling_rate param is in launch file
     while not rospy.is_shutdown():
         # Get the current station values (every two values is a ball/done pair)
-        station_states = update_sensor_array(client.read_coils(1, plc_num_stations*2), plc_num_stations)
+        station_states = update_sensor_array(client.read_discrete_inputs(0x8000, plc_num_stations*2), plc_num_stations)
         # Get the current button values (every two values is a button/indicator pair) (buttons follow stations in PLC addresses)
-        button_states = update_button_array(client.read_coils((1+plc_num_stations*2), plc_num_buttons*2), plc_num_buttons)
+        button_states = update_button_array(client.read_discrete_inputs((0x8000+(plc_num_stations*2)), plc_num_buttons*2), plc_num_buttons)
         # Wait until the next Modbus poll
         plc_polling_rate.sleep()
 
