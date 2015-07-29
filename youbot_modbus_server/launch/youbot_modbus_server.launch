@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <node pkg="youbot_modbus_server" required="true" type="youbot_modbus.py" name="youbot_modbus_server" output="screen">
+        <param name="~modbus_server_ip" type="string" value="localhost" />
+        <param name="~modbus_server_port" type="string" value="502" />
+        <param name="~station_status_topic" type="string" value="youbot_modbus_server/get_station_status" />
+        <param name="~button_status_topic" type="string" value="youbot_modbus_server/get_button_status" />
+        <param name="~plc_polling_rate_hz" type="int" value="1" />
+    </node>
+
+
+</launch>
