@@ -16,7 +16,9 @@ import std_msgs.msg
 from youbot_modbus_server.srv import *
 
 def poll_modbus_sensor_client():
+    print "Waiting for service..."
     rospy.wait_for_service('youbot_modbus_server/get_station_status')
+    print "[DONE]"
     try:
         modbus_handler = rospy.ServiceProxy('youbot_modbus_server/get_station_status', YoubotModbusSensorMsg)
         # Build the ROS header

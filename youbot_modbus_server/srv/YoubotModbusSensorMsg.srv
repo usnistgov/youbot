@@ -18,6 +18,7 @@
 Header header
 ---
 Header header
+bool data_validity
 int8 station_1_status
 int8 station_2_status
 int8 station_3_status
