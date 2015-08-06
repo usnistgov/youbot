@@ -18,6 +18,7 @@
 Header header
 ---
 Header header
+bool data_validity
 int8 estop_button_status
 int8 estop_indicator_status
 int8 yellow_button_status
@@ -26,4 +27,4 @@ int8 green_button_status
 int8 green_indicator_status
 int8 runstop_switch_status
 int8 runstop_indicator_status
-int8 supervisor_runstop_state
+int8 supervisor_runstop_status
