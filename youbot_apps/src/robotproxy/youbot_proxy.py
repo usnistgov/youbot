@@ -233,7 +233,8 @@ class YoubotProxy(BaseProxy):
     def get_next_command_list(self, sensors_status, buttons_status):
         cmd_list_name = ""
 
-        if buttons_status.supervisor_runstop_state == 1:
+        # Do not start a new script unless the supervisor is in the RUN state, and the sensor data is valid
+        if buttons_status.supervisor_runstop_state == 1 and sensors_status.data_validity == True:
             if(self.arm_num == 1):
                 if ((sensors_status.station_1_status > 0) \
                     and (sensors_status.station_2_status == 2) \
@@ -290,7 +291,8 @@ class YoubotProxy(BaseProxy):
             rospy.logdebug("button status")
             rospy.logdebug(button_status)
 
-            if button_status.runstop_switch_status == 1:
+            # Do not continue unless we are in the RUN state, and the button data is valid
+            if button_status.runstop_switch_status == 1 and buttons_status.data_validity == True:
 
                 # get next set of commands
                 station_status = self.get_station_status()
