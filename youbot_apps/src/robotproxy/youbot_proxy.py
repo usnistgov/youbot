@@ -19,6 +19,7 @@ from sensor_msgs.msg import JointState
 import numpy
 import itertools
 import json
+from youbot_modbus_server.srv import *
 
 class YoubotProxy(BaseProxy):
     
@@ -51,6 +52,7 @@ class YoubotProxy(BaseProxy):
 
         # init joint_states subscriber
         self._joint_positions_arm = [0]*5
+        self._joint_velocities_arm = [0]*5
         self._joint_positions_gripper = [0]*2        
         # todo: create thread event object for joint_states variable
         self._joint_states_topic = rospy.get_param("~joint_states_topic", "/arm_" + str(self.arm_num) + "/joint_states")
@@ -59,17 +61,18 @@ class YoubotProxy(BaseProxy):
         # Gripper distance tolerance: 1 mm 
         self.gripper_distance_tol = rospy.get_param("~gripper_distance_tol", 0.05) 
         # Joint distance tolerance: 1/10 radian tolerance (1.2 degrees)
-        self.arm_joint_distance_tol = rospy.get_param("~joint_distance_tol",0.025)            
-        
-        # init moveit
-        # try:
-        #     moveit_commander.roscpp_initialize(sys.argv)
-        #     self.arm_group = moveit_commander.MoveGroupCommander("manipulator")
-        #     self.arm_group.set_planning_time(8)
-        #     self.arm_group.set_pose_reference_frame("base_link")
-        #     rospy.loginfo("planning group created for manipulator")
-        # except:
-        #     pass
+        self.arm_joint_distance_tol = rospy.get_param("~joint_distance_tol",0.025)
+        rospy.loginfo("arm joint position tolerance: " + str(self.arm_joint_distance_tol))
+        self.arm_joint_velocity_tol = rospy.get_param("~joint_velocity_tol",0.05)
+        rospy.loginfo("arm joint velocity tolerance: " + str(self.arm_joint_velocity_tol))
+
+        # connect to modbus service
+        rospy.wait_for_service('youbot_modbus_server/get_station_status')
+        rospy.wait_for_service('youbot_modbus_server/get_button_status')
+        self.get_station_status = rospy.ServiceProxy('youbot_modbus_server/get_station_status', YoubotModbusSensorMsg)
+        self.get_button_status = rospy.ServiceProxy('youbot_modbus_server/get_button_status', YoubotModbusButtonMsg)
+        rospy.loginfo("modbus clients started")
+        print "I have made it here!"
 
         # init arm publisher
         self._arm_pub = rospy.Publisher("arm_" + str(self.arm_num) + "/arm_controller/position_command", JointPositions)
@@ -94,6 +97,7 @@ class YoubotProxy(BaseProxy):
 
             # todo: wait for lock release
             self._joint_positions_arm = [ data.position[i] for i in self.arm_joint_indexes ]
+            self._joint_velocities_arm = [ data.velocity[i] for i in self.arm_joint_indexes ]
             self._joint_positions_gripper = [ data.position[i] for i in self.gripper_joint_indexes ]
 
         except Exception as e:
@@ -138,10 +142,14 @@ class YoubotProxy(BaseProxy):
         while not rospy.is_shutdown():
             curr_jpos = self._joint_positions_arm
             d = BaseProxy.measure_joint_distance_sum(curr_jpos, positions)
+            v = BaseProxy.measure_joint_velocity_ss(self._joint_velocities_arm)
             rospy.logdebug(d)
             rospy.logdebug("arm joint positions")
             rospy.logdebug(curr_jpos)
-            if (d < self.arm_joint_distance_tol):
+            rospy.logdebug(d)
+            rospy.logdebug("arm joint velocities")
+            rospy.logdebug(self._joint_velocities_arm)            
+            if ((d < self.arm_joint_distance_tol) and (v<=self.arm_joint_velocity_tol)):
                 # rospy.logdebug("moved arm to joint position error of: " + str(d))
                 break        
             td = rospy.Time().now()
@@ -222,87 +230,144 @@ class YoubotProxy(BaseProxy):
         d = abs(opening_m - curr_opening_m)
         return d 
 
+    def get_next_command_list(self, sensors_status, buttons_status):
+        cmd_list_name = ""
+
+        if buttons_status.supervisor_runstop_state == 1:
+            if(self.arm_num == 1):
+                if ((sensors_status.station_1_status > 0) \
+                    and (sensors_status.station_2_status == 2) \
+                    and (sensors_status.station_3_status == 0)):
+                    cmd_list_name = "rob1_2to7"
+                elif ((sensors_status.station_1_status == 0) \
+                    and (sensors_status.station_6_status == 2)):
+                    cmd_list_name = "rob1_6to1"
+                elif ((sensors_status.station_1_status == 2) \
+                    and (sensors_status.station_2_status == 0)):
+                    cmd_list_name = "rob1_1to2"   
+                else:
+                    cmd_list_name = None                             
+
+            elif(self.arm_num == 2):
+                rob1_catch = self.get_depend_status("/arm_1/hey_catch")
+                if ((sensors_status.station_3_status == 0) and rob1_catch):
+                    cmd_list_name = "rob2_8to3"
+                elif ((sensors_status.station_3_status == 2) \
+                    and (sensors_status.station_4_status == 0)):
+                    cmd_list_name = "rob2_3to4"
+                elif (sensors_status.station_4_status == 2):
+                    cmd_list_name = "rob2_4to5"                                
+                else:
+                    cmd_list_name = None
+
+        elif buttons_status.supervisor_runstop_state == 0 and buttons_status.yellow_button_status == 1:
+            cmd_list_name = "reset"
+
+        else:
+            cmd_list_name = None
+
+        if cmd_list_name is None:
+            return None
+        else:
+            return self.commands[cmd_list_name]
+
+
     def control_loop(self):
         if self.commands is None:
             raise Exception('Command list is empty.  Was the control plan loaded?')
 
         # wait for the system/begin command
-        self.wait_for_system_begin()
+        #self.wait_for_system_begin()
         
         # get current time
         t0 = td = rospy.Time().now().to_sec()
 
-        # loop through the command list
-        # for cmd in self.commands:
-        for cmd in itertools.cycle(self.commands):
-            
-            # check if rospy shutdown (Ctrl-C)
-            if rospy.is_shutdown():
-                rospy.loginfo("Received interrupt")
-                break;
 
-            # wait for proxy to be in active state
-            self.wait_for_state(self._proxy_state_running)
-            
-            # process commands
-            cmd_spec_str = None
-            spec = None
-            t = cmd[ProxyCommand.key_command_type]
-            if not (t == "noop"):
-                cmd_spec_str = cmd[ProxyCommand.key_command_spec]
-                if not isinstance(cmd_spec_str, basestring):
-                    spec = float(cmd_spec_str)
-                else:
-                    spec = self.positions[cmd_spec_str]
-                rospy.loginfo("Command type: " + t.ljust(20) + "spec: " + str(cmd_spec_str).ljust(26) + "value: " + str(spec))
-                       
-            # check for any wait depends
-            self.wait_for_depend(cmd)
+        while not rospy.is_shutdown():
 
-            # execute command
-            # could do this with a dictionary-based function lookup, but who cares
-            if t == 'noop':
-                rospy.logdebug("Command type: noop")
-                self.wait_for_depend(cmd)
-            elif t == 'sleep':
-                rospy.logdebug("sleep command")
-                v = float(spec)
-                rospy.sleep(v)
-            elif t == 'move_gripper':
-                rospy.logdebug("gripper command")
-                self.move_gripper(spec)
-            elif t == 'move_arm':
-                rospy.logdebug("move_arm command")
-                rospy.logdebug(spec)
-                self.move_arm(spec)
-            elif t == 'plan_exec_arm':
-                rospy.logdebug("plan and execute command not implemented")
-                raise NotImplementedError()
-            elif t == 'reset':
-                rospy.logdebug("reset dependency database")
-                self.reset_depend_status()
-                t0 = td = rospy.Time().now().to_sec()
-            elif t == 'exit':
-                rospy.logdebug("Command set complete.  Exiting.")
-                break
-            else:
-                raise Exception("Invalid command type: " + str(cmd.type))
+            # read the PLC run state
+            button_status = self.get_button_status()
+            rospy.logdebug("button status")
+            rospy.logdebug(button_status)
 
-            # check for any set dependencies action
-            self.set_depend(cmd)
+            if button_status.runstop_switch_status == 1:
 
-            # check for any clear dependencies action
-            self.clear_depend(cmd)
+                # get next set of commands
+                station_status = self.get_station_status()
+                rospy.logdebug("station status")
+                rospy.logdebug(station_status)
 
-            # log elapsed time
-            # check if it is time to stop
-            tk = rospy.Time().now().to_sec()
-            td = tk - t0
-            rospy.loginfo('total elapsed loop time: ' + str(td))
+                # determine the next command list (state table lookup)
+                cmd_list = self.get_next_command_list(station_status, button_status)
+                rospy.logdebug("Next command sequence") 
+                rospy.logdebug(cmd_list)
 
+                if cmd_list is None:
+                    continue
 
+                # process the command list
+                for cmd in cmd_list:
 
+                    # check if rospy shutdown (Ctrl-C)
+                    if rospy.is_shutdown():
+                        rospy.loginfo("Received interrupt")
+                        break;                    
 
+                    # execute the command
+                    if cmd is None:
+                        continue
 
+                    cmd_spec_str = None
+                    spec = None
+                    t = cmd[ProxyCommand.key_command_type]
+                    if not (t == "noop"):
+                        cmd_spec_str = cmd[ProxyCommand.key_command_spec]
+                        if not isinstance(cmd_spec_str, basestring):
+                            spec = float(cmd_spec_str)
+                        else:
+                            spec = self.positions[cmd_spec_str]
+                        rospy.loginfo("Command type: " + t.ljust(20) + "spec: " + str(cmd_spec_str).ljust(26) + "value: " + str(spec))
+                               
+                    # check for any wait depends
+                    self.wait_for_depend(cmd)
 
+                    # execute command
+                    # could do this with a dictionary-based function lookup, but who cares
+                    if t == 'noop':
+                        rospy.logdebug("Command type: noop")
+                        self.wait_for_depend(cmd)
+                    elif t == 'sleep':
+                        rospy.logdebug("sleep command")
+                        v = float(spec)
+                        rospy.sleep(v)
+                    elif t == 'move_gripper':
+                        rospy.logdebug("gripper command")
+                        self.move_gripper(spec)
+                    elif t == 'move_arm':
+                        rospy.logdebug("move_arm command")
+                        rospy.logdebug(spec)
+                        self.move_arm(spec)
+                    elif t == 'plan_exec_arm':
+                        rospy.logdebug("plan and execute command not implemented")
+                        raise NotImplementedError()
+                    elif t == 'reset':
+                        rospy.logdebug("reset dependency database")
+                        self.reset_depend_status()
+                        t0 = td = rospy.Time().now().to_sec()
+                    elif t == 'exit':
+                        rospy.logdebug("Command set complete.  Exiting.")
+                        break
+                    else:
+                        raise Exception("Invalid command type: " + str(cmd.type))
 
+                    # check for any set dependencies action
+                    self.set_depend(cmd)
+
+                    # check for any clear dependencies action
+                    self.clear_depend(cmd)
+
+                    # log elapsed time
+                    # check if it is time to stop
+                    tk = rospy.Time().now().to_sec()
+                    td = tk - t0
+                    rospy.loginfo('total elapsed loop time: ' + str(td))                    

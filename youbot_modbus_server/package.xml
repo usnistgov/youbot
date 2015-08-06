@@ -6,7 +6,7 @@
   <license>Public Domain</license>
   <maintainer email="timothy.zimmerman@nist.gov">Timothy Zimmerman</maintainer>
   <author email="timothy.zimmerman@nist.gov">Timothy Zimmerman</author>
-  <url type="website">http://github.com/usnistgov/youbot_modbus_server</url>
+  <url type="website">http://github.com/usnistgov/youbot/youbot_modbus_server</url>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>rospy</build_depend>

@@ -60,9 +60,9 @@ class BaseProxy(object):
     def load_control_plan(self, path_to_dict_yaml, path_to_cmds_yaml):
         # load the joint positions dictionary 
         self.positions = JointPoseDictionary(path_to_dict_yaml)
-        print self.positions
+        rospy.logdebug(self.positions)
         self.commands = CommandSequence(path_to_cmds_yaml)
-        print self.commands
+        rospy.logdebug(self.commands)
     
     def sleep(self, rate_obj, fsecs):
         rospy.sleep(fsecs)
@@ -77,7 +77,10 @@ class BaseProxy(object):
         '''
         if cmd.has_key(ProxyCommand.key_command_wait_depend):
             wait_depend_name = cmd[ProxyCommand.key_command_wait_depend]
-            self.depends_status.wait_for_depend(wait_depend_name)        
+            self.depends_status.wait_for_depend(wait_depend_name)      
+
+    def get_depend_status(self, name):
+        return self.depends_status.get_depend_status(name)
 
     def clear_depend(self, cmd):
         '''
@@ -118,6 +121,12 @@ class BaseProxy(object):
         y = numpy.asfarray(y)     
         d = numpy.sum(numpy.abs(x-y))   
         return d        
+    
+    @classmethod
+    def measure_joint_velocity_ss(cls, x):
+        v = numpy.asfarray(x)
+        d = numpy.sum(v**2)
+        return d
             
     @property
     def frame_id(self): 

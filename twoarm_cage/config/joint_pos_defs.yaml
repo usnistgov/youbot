@@ -33,30 +33,32 @@ cand: [2.94,1.0,-2.1,1.8,2.94] # candle
 rob1_station_1_pick: [3.79, 1.12, -0.78, 1.58, 2.95]
 rob1_station_1_dwell: [3.79, 1.12, -0.78, 1.38, 2.95]
 
-rob1_station_2_pick: [5.30, 1.23, -0.83, 1.48, 2.95]
-rob1_station_2_dwell: [5.30, 1.23, -0.83, 1.28, 2.95]
+rob1_station_2_pick: [5.32, 1.23, -0.83, 1.48, 2.95]
+rob1_station_2_dwell: [5.32, 1.23, -0.83, 1.28, 2.95]
 
-rob2_station_3_pick: [1.05, 0.76, -0.53, 1.73, 2.92]
-rob2_station_3_dwell: [1.05, 0.76, -0.53, 1.53, 2.92]
+rob2_station_3_pick: [1.06, 0.74, -0.46, 1.62, 2.92]
+rob2_station_3_dwell: [1.06, 0.74, -0.46, 1.02, 2.92]
 
-rob2_station_4_pick: [1.71, 0.78, -0.54, 1.72, 2.99]
-rob2_station_4_dwell: [1.71, 0.78, -0.54, 1.52, 2.99]
+rob2_station_4_pick: [1.69, 0.75, -0.40, 1.52, 2.95]
+rob2_station_4_dwell: [1.69, 0.75, -0.40, 1.02, 2.95]
 
 rob2_station_5_drop: [3.00, 1.89, -1.87, 3.37, 4.63]
 rob2_station_5_dwell: [3.00, 1.69, -1.87, 3.37, 4.63]
 
 rob1_station_6_pick: [2.91, 2.11, -1.92, 3.33, 1.32]
 rob1_station_6_lift: [2.91, 1.91, -1.92, 3.33, 1.32]
-rob1_station_6_dwell: [3.11, 2.11, -1.92, 3.33, 1.32]
+rob1_station_6_dwell: [3.45, 2.11, -1.92, 3.33, 1.32]
 rob1_station_6_safe: [2.91, 0.29, -1.23, 2.85, 2.91]
 
-rob1_station_7_place: [1.35, 0.59, -1.03, 2.39, 2.96]
+rob1_station_7_place: [1.35, 0.59, -1.03, 2.37, 2.96]
 rob1_station_7_lift: [1.35, 0.59, -1.03, 2.00, 2.96]
 
-rob2_station_8_pick: [1.39, 1.10, -3.61, 1.32, 1.37]
-rob2_station_8_dwell: [1.19, 1.10, -3.61, 1.32, 1.37]
+rob2_station_8_pick: [1.40, 1.10, -3.61, 1.32, 1.37]
+rob2_station_8_dwell: [1.69, 1.10, -3.61, 1.32, 1.37]
 
 opening: 22      # opening gap in mm
 closing: 1       # closing gap in mm
 wait_for_ball: 1.2
 
+# safe position - note: move to candle before returning to safe_home
+safe_homne: [-0.0, -0.0, 0.0, -0.0, 0.0053, 0.0, 0.0]

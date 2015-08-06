@@ -1,0 +1,141 @@
+# Author: Rick Candell
+# Org: NIST
+# License: Public Domain
+# Configuration file format
+# Put a - between each entry 
+# Specify the following:
+#   name: name of action (optional)
+#   type: plan_exec_arm, move_arm, move_gripper, sleep, 'noop'
+#   spec:  for all move types, specify the name of the goal as joint positions
+#             for all plan types, specify the eef position as [x, y, z, r, p, y]
+#             for sleep, specify seconds as a float
+#   wait_depend: full name of dependency
+#   set_depend: name of dependency to update once action is complete
+
+reset:
+    - { type: reset, spec: 0 }
+    - { type: move_arm, spec: cand}
+    - { type: move_gripper, spec: opening}
+
+exit:
+    - { type: reset, spec: 0 }
+    - { type: move_arm, spec: cand}
+    - { type: move_gripper, spec: opening}
+
+rob1_6to1:
+    - { type: move_arm, spec: rob1_station_6_dwell}
+    - { type: sleep, spec: 0.5}
+    - { type: move_arm, spec: rob1_station_6_pick}
+    - { type: move_gripper, spec: closing}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob1_station_6_lift}
+    - { type: sleep, spec: 0.5}
+    - { type: move_arm, spec: rob1_station_6_safe}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob1_station_1_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob1_station_1_pick}
+    - { type: move_gripper, spec: opening}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob1_station_1_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: cand}
+
+rob1_1to2:
+    - { type: move_arm, spec: rob1_station_1_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob1_station_1_pick}
+    - { type: sleep, spec: 1.0}
+    - { type: move_gripper, spec: closing}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob1_station_1_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob1_station_2_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob1_station_2_pick}
+    - { type: sleep, spec: 1.0}
+    - { type: move_gripper, spec: opening}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob1_station_2_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: cand}
+
+rob1_2to7:
+    - { type: move_arm, spec: rob1_station_2_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob1_station_2_pick}
+    - { type: sleep, spec: 1.0}
+    - { type: move_gripper, spec: closing}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob1_station_2_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob1_station_7_place, set_depend: /arm_1/hey_catch}
+    - { type: noop, wait_depend: /arm_2/got_it}
+    - { type: move_gripper, spec: opening}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob1_station_7_lift}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: cand, set_depend: /arm_1/im_clear}
+    - { type: sleep, spec: 1.0}
+    - { type: noop}
+
+rob2_8to3:
+    - { type: noop, wait_depend: /arm_1/hey_catch}
+    - { type: move_arm, spec: rob2_station_8_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob2_station_8_pick}
+    - { type: sleep, spec: 1.0}
+    - { type: move_gripper, spec: closing}
+    - { type: sleep, spec: 2.0}
+    - { type: noop, set_depend: /arm_2/got_it}
+    - { type: move_arm, spec: rob2_station_3_dwell, wait_depend: /arm_1/im_clear}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob2_station_3_pick}
+    - { type: sleep, spec: 1.0}
+    - { type: move_gripper, spec: opening}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob2_station_3_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: cand}
+    - { type: sleep, spec: 1.0}
+
+rob2_3to4:
+    - { type: move_arm, spec: rob2_station_3_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob2_station_3_pick}
+    - { type: sleep, spec: 1.0}
+    - { type: move_gripper, spec: closing}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob2_station_3_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob2_station_4_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob2_station_4_pick}
+    - { type: sleep, spec: 1.0}
+    - { type: move_gripper, spec: opening}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob2_station_4_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: cand}
+    - { type: sleep, spec: 1.0}
+
+rob2_4to5:
+    - { type: move_arm, spec: rob2_station_4_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob2_station_4_pick}
+    - { type: sleep, spec: 1.0}
+    - { type: move_gripper, spec: closing}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob2_station_4_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob2_station_5_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob2_station_5_drop}
+    - { type: sleep, spec: 1.0}
+    - { type: move_gripper, spec: opening}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob2_station_5_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: cand}
+    - { type: sleep, spec: 1.0}
+

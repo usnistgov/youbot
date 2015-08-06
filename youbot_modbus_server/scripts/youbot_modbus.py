@@ -27,7 +27,7 @@ station_states = []
 button_states = []
 
 plc_num_stations = 6
-plc_num_buttons = 4
+plc_num_buttons = 6
 
 def handle_station_request(data): 
     global station_states
@@ -48,7 +48,7 @@ def handle_button_request(data):
     return YoubotModbusButtonMsgResponse( \
         header,button_states[0],button_states[1],button_states[2], \
         button_states[3],button_states[4],button_states[5], \
-        button_states[6],button_states[7])
+        button_states[6],button_states[7],button_states[8])
     
 def update_sensor_array(data, num_stations): 
     i = 0
@@ -99,9 +99,9 @@ def youbot_modbus_server_server():
     # Main loop for polling the Modbus Server on the PLC - plc_polling_rate param is in launch file
     while not rospy.is_shutdown():
         # Get the current station values (every two values is a ball/done pair)
-        station_states = update_sensor_array(client.read_coils(1, plc_num_stations*2), plc_num_stations)
+        station_states = update_sensor_array(client.read_discrete_inputs(0x8000, plc_num_stations*2), plc_num_stations)
         # Get the current button values (every two values is a button/indicator pair) (buttons follow stations in PLC addresses)
-        button_states = update_button_array(client.read_coils((1+plc_num_stations*2), plc_num_buttons*2), plc_num_buttons)
+        button_states = update_button_array(client.read_discrete_inputs((0x8000+(plc_num_stations*2)), plc_num_buttons*2), plc_num_buttons)
         # Wait until the next Modbus poll
         plc_polling_rate.sleep()
 
