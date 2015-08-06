@@ -26,3 +26,4 @@ int8 green_button_status
 int8 green_indicator_status
 int8 runstop_switch_status
 int8 runstop_indicator_status
+int8 supervisor_runstop_state

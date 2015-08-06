@@ -27,7 +27,7 @@ station_states = []
 button_states = []
 
 plc_num_stations = 6
-plc_num_buttons = 4
+plc_num_buttons = 6
 
 def handle_station_request(data): 
     global station_states
@@ -48,7 +48,7 @@ def handle_button_request(data):
     return YoubotModbusButtonMsgResponse( \
         header,button_states[0],button_states[1],button_states[2], \
         button_states[3],button_states[4],button_states[5], \
-        button_states[6],button_states[7])
+        button_states[6],button_states[7],button_states[8])
     
 def update_sensor_array(data, num_stations): 
     i = 0

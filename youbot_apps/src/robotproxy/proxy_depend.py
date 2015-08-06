@@ -40,6 +40,12 @@ class ProxyDepends(object):
         '''
         self._d[data.name] = data.status
         rospy.logdebug("received dependency update " + data.name + " with " + str(data.status))
+
+    def get_depend_status(self, name):
+        if self._d.has_key(name):
+            return self._d[name]
+        else:
+            return False
             
     def wait_for_depend(self, name, timeout_secs=6000):
         rospy.logdebug("waiting for dependency " + name + " with timeout " + str(timeout_secs))

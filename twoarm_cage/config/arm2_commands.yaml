@@ -12,127 +12,16 @@
 #   wait_depend: full name of dependency
 #   set_depend: name of dependency to update once action is complete
 
--
-    type: reset
-    spec: 0
--
-    type: move_arm 
-    spec: cand
-    #set_depend: /arm_2/ready_to_begin    
-- 
-    type: move_gripper
-    spec: opening 
--
-    type: noop
-    wait_depend: /arm_1/ready_to_begin
--
-    set_depend: /arm_2/ready_to_begin  
-    type: move_arm 
-    spec: preload
--
-    type: move_arm 
-    spec: load  
--
-    type: move_gripper
-    spec: closing
--
-    # The robot needs time to manipulate the gripper
-    type: sleep
-    spec: 1.8
--
-    type: move_arm 
-    spec: preload 
--
-    type: move_arm
-    spec: premach2
--
-    type: move_arm
-    spec: mach2
--
-    type: move_gripper
-    spec: opening
--
-    # The robot needs time to manipulate the gripper
-    type: sleep
-    spec: 1.8
--
-    type: move_arm
-    spec: premach2
--
-    type: move_arm
-    spec: cand
--
-    type: move_arm
-    spec: pretrans2
--
-    wait_depend: /arm_1/ready_with_ball
-    type: move_arm
-    spec: trans2
--
-    type: move_gripper
-    spec: closing
--
-    # The robot needs time to manipulate the gripper
-    type: sleep
-    spec: 1.8
-    set_depend: /arm_2/got_ball
--
-    wait_depend: /arm_1/ball_released
-    type: move_arm
-    spec: posttrans2
--
-    type: move_arm
-    spec: cand
--
-    type: move_arm
-    spec: preload  
--
-    type: move_arm
-    spec: load    
--
-    type: move_gripper
-    spec: opening
--
-    # The robot needs time to manipulate the gripper
-    type: sleep
-    spec: 1.8
--
-    type: move_arm
-    spec: preload    
--
-    type: move_arm 
-    spec: premach2
--
-    type: move_arm 
-    spec: mach2
--
-    type: move_gripper
-    spec: closing
--
-    # The robot needs time to manipulate the gripper
-    type: sleep
-    spec: 1.8
--
-    type: move_arm 
-    spec: premach2
--
-    type: move_arm
-    spec: dropoffdwell
--
-    type: move_arm
-    spec: dropoff  
--
-    type: move_gripper
-    spec: opening
-    set_depend: /arm_2/ball_on_ramp
--
-    # This is just to wait for the ball to roll. Can be longer if necessary.
-    # Note: this will eventually be a proximity sensor
-    type: sleep
-    spec: 3.5 
--
-    type: move_arm 
-    spec: dropoffdwell
--
-    type: move_arm
-    spec: cand
+reset:
+    - { type: reset, spec: 0 }
+    - { type: move_arm, spec: cand}
+    - { type: move_gripper, spec: opening}
+
+rob2_8to3:
+# set_depend: /arm_1/hey_catch
+# clear the depend after taking ball
+
+rob2_3to4:
+
+rob2_4to5:
+

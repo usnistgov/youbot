@@ -1,4 +1,4 @@
- Author: Rick Candell
+# Author: Rick Candell
 # Org: NIST
 # License: Public Domain
 # Configuration file format
@@ -12,178 +12,58 @@
 #   wait_depend: full name of dependency
 #   set_depend: name of dependency to update once action is complete
 
--
-    type: reset
-    spec: 0
--
-    type: move_arm
-    spec: cand   
-    set_depend: /arm_1/ready_to_begin 
--
-    type: move_gripper
-    spec: opening
--
-    type: sleep
-    spec: 2.0
--
-    type: move_arm
-    spec: rob1_station_6_dwell
--
-    type: sleep
-    spec: 0.5
--
-    type: move_arm
-    spec: rob1_station_6_pick
--
-    type: move_gripper
-    spec: closing
--
-    type: sleep
-    spec: 2.0
--
-    type: move_arm
-    spec: rob1_station_6_lift
--
-    type: sleep
-    spec: 0.5
--
-    type: move_arm
-    spec: rob1_station_6_safe
--
-    type: sleep
-    spec: 1.0
--
-    type: move_arm
-    spec: rob1_station_1_dwell
--
-    type: sleep
-    spec: 1.0
--
-    type: move_arm
-    spec: rob1_station_1_pick
--
-    type: move_gripper
-    spec: opening
--
-    type: sleep
-    spec: 2.0
--
-    type: move_arm
-    spec: rob1_station_1_dwell
--
-    type: sleep
-    spec: 1.0
--
-    type: move_arm
-    spec: cand   
--
-    type: move_arm
-    spec: rob1_station_1_dwell
--
-    type: sleep
-    spec: 1.0
--
-    type: move_arm
-    spec: rob1_station_1_pick
--
-    type: sleep
-    spec: 1.0
--
-    type: move_gripper
-    spec: closing
--
-    type: sleep
-    spec: 2.0
--
-    type: move_arm
-    spec: rob1_station_1_dwell
--
-    type: sleep
-    spec: 1.0
--
-    type: move_arm
-    spec: rob1_station_2_dwell
--
-    type: sleep
-    spec: 1.0
--
-    type: move_arm
-    spec: rob1_station_2_pick
--
-    type: sleep
-    spec: 1.0
--
-    type: move_gripper
-    spec: opening
--
-    type: sleep
-    spec: 2.0
--
-    type: move_arm
-    spec: rob1_station_2_dwell
--
-    type: sleep
-    spec: 1.0
--
-    type: move_arm
-    spec: cand
--
-    type: sleep
-    spec: 1.0
--
-    type: move_arm
-    spec: rob1_station_2_dwell
--
-    type: sleep
-    spec: 1.0
--
-    type: move_arm
-    spec: rob1_station_2_pick
--
-    type: sleep
-    spec: 1.0
--
-    type: move_gripper
-    spec: closing
--
-    type: sleep
-    spec: 2.0
--
-    type: move_arm
-    spec: rob1_station_2_dwell
--
-    type: sleep
-    spec: 1.0
--
-    type: move_arm
-    spec: rob1_station_6_safe
--
-    type: sleep
-    spec: 1.0
--
-    type: move_arm
-    spec: rob1_station_6_lift
--
-    type: sleep
-    spec: 1.0
--
-    type: move_arm
-    spec: rob1_station_6_pick
--
-    type: sleep
-    spec: 1.0
--
-    type: move_gripper
-    spec: opening
--
-    type: sleep
-    spec: 2.0
--
-    type: move_arm
-    spec: rob1_station_6_dwell
--
-    type: sleep
-    spec: 1.0
--
-    type: move_arm
-    spec: cand
+reset:
+    - { type: reset, spec: 0 }
+    - { type: move_arm, spec: cand}
+    - { type: move_gripper, spec: opening}
+
+exit:
+    - { type: reset, spec: 0 }
+    - { type: move_arm, spec: cand}
+    - { type: move_gripper, spec: opening}
+
+rob1_6to1:
+    - { type: move_arm, spec: cand, set_depend: /arm_1/ready_to_begin }
+    - { type: move_gripper, spec: opening}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob1_station_6_dwell}
+    - { type: sleep, spec: 0.5}
+    - { type: move_arm, spec: rob1_station_6_pick}
+    - { type: move_gripper, spec: closing}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob1_station_6_lift}
+    - { type: sleep, spec: 0.5}
+    - { type: move_arm, spec: rob1_station_6_safe}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob1_station_1_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob1_station_1_pick}
+    - { type: move_gripper, spec: opening}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob1_station_1_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: cand}
+
+rob1_1to2:
+    - { type: move_arm, spec: rob1_station_1_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob1_station_1_pick}
+    - { type: sleep, spec: 1.0}
+    - { type: move_gripper, spec: closing}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob1_station_1_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob1_station_2_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: rob1_station_2_pick}
+    - { type: sleep, spec: 1.0}
+    - { type: move_gripper, spec: opening}
+    - { type: sleep, spec: 2.0}
+    - { type: move_arm, spec: rob1_station_2_dwell}
+    - { type: sleep, spec: 1.0}
+    - { type: move_arm, spec: cand}
+
+rob1_2to7:
+
+
+

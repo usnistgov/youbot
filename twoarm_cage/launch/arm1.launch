@@ -29,14 +29,15 @@ or enable the USE_SETCAP flag in the cmake file and recompile again.
 			required="true"
 			type="robot_proxy_exec.py" 
 			name="robot_proxy_1"
-			output="log">
+			output="screen">
 
 		<param name="~arm_num" type="int" value="1" />
 		<param name="~joint_pose_dict" type="string" value="$(find twoarm_cage)/config/joint_pos_defs.yaml"/>
-		<param name="~cmd_seq" type="string" value="$(find twoarm_cage)/config/arm1_commands.yaml" />
+		<param name="~cmd_seq" type="string" value="$(find twoarm_cage)/config/arm_commands.yaml" />
 		<param name="~joint_states_topic" type="string" value="/arm_1/joint_states" />
 
 	    <param name="~joint_distance_tol" type="double" value="0.05" />
+	    <param name="~joint_velocity_tol" type="double" value="0.05" />
 	    <param name="~arm_move_duration" type="double" value="10.0" />
 
 	    <param name="~gripper_distance_tol" type="double" value="0.05" />
